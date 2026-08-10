@@ -23,7 +23,9 @@ TEST_DATABASE_URL = os.environ.get(
 
 def _postgres_reachable() -> bool:
     try:
-        engine = create_engine(TEST_DATABASE_URL, future=True)
+        engine = create_engine(
+            TEST_DATABASE_URL, future=True, connect_args={"connect_timeout": 2}
+        )
         with engine.connect() as conn:
             conn.execute(text("SELECT 1"))
         engine.dispose()

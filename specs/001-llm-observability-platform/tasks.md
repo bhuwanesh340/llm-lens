@@ -23,14 +23,14 @@ description: "Task list for LLM Observability Platform (v0.1 Foundation)"
 
 **Purpose**: Repository, dependency, and container scaffolding
 
-- [ ] T001 Create repository structure per plan.md (`backend/`, `frontend/`, `litellm/`, `docs/`, `examples/`, `scripts/`, root `docker-compose.yml`, `.env.example`)
-- [ ] T002 Initialize backend Python 3.12 project and create a virtual environment where install with `uv` in backend/pyproject.toml (fastapi, sqlalchemy, alembic, pydantic, pydantic-settings, psycopg, httpx, structlog, prometheus-client, pytest, pytest-asyncio, ruff, mypy)
+- [X] T001 Create repository structure per plan.md (`backend/`, `frontend/`, `litellm/`, `docs/`, `examples/`, `scripts/`, root `docker-compose.yml`, `.env.example`)
+- [X] T002 Initialize backend Python 3.12 project and create a virtual environment where install with `uv` in backend/pyproject.toml (fastapi, sqlalchemy, alembic, pydantic, pydantic-settings, psycopg, httpx, structlog, prometheus-client, pytest, pytest-asyncio, ruff, mypy)
 - [ ] T003 [P] Initialize frontend Next.js 15 + TypeScript project with `pnpm` in frontend/package.json (tailwindcss, shadcn/ui, @tanstack/react-query, recharts, react-hook-form, zod, vitest, @testing-library/react, playwright, eslint, prettier)
-- [ ] T004 [P] Configure backend linting/type-checking (ruff + mypy config) in backend/pyproject.toml
+- [X] T004 [P] Configure backend linting/type-checking (ruff + mypy config) in backend/pyproject.toml
 - [ ] T005 [P] Configure frontend linting/formatting/strict TypeScript (eslint, prettier, tsconfig strict mode) in frontend/.eslintrc, frontend/tsconfig.json
-- [ ] T006 Create docker-compose.yml with postgres, litellm, backend, frontend services, required health checks, and `depends_on` startup ordering (postgres → backend → litellm → frontend)
-- [ ] T007 [P] Create .env.example with all variables (APP_*, POSTGRES_*, DATABASE_URL, LITELLM_PORT, LITELLM_MASTER_KEY, provider keys, OLLAMA_BASE_URL, NEXT_PUBLIC_API_URL, SECRET_KEY, ADMIN_EMAIL, ADMIN_PASSWORD_HASH, STORE_PROMPTS, STORE_RESPONSES, REQUEST_RETENTION_DAYS)
-- [ ] T008 [P] Create litellm/config.yaml with example model_list entries for openai/anthropic/gemini/ollama, referencing env vars (no hard-coded keys)
+- [X] T006 Create docker-compose.yml with postgres, litellm, backend, frontend services, required health checks, and `depends_on` startup ordering (postgres → backend → litellm → frontend)
+- [X] T007 [P] Create .env.example with all variables (APP_*, POSTGRES_*, DATABASE_URL, LITELLM_PORT, LITELLM_MASTER_KEY, provider keys, OLLAMA_BASE_URL, NEXT_PUBLIC_API_URL, SECRET_KEY, ADMIN_EMAIL, ADMIN_PASSWORD_HASH, STORE_PROMPTS, STORE_RESPONSES, REQUEST_RETENTION_DAYS)
+- [X] T008 [P] Create litellm/config.yaml with example model_list entries for openai/anthropic/gemini/ollama, referencing env vars (no hard-coded keys)
 
 ---
 
@@ -40,18 +40,18 @@ description: "Task list for LLM Observability Platform (v0.1 Foundation)"
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T009 Setup SQLAlchemy base + Alembic migrations framework in backend/app/db/base.py, backend/app/db/session.py, backend/alembic.ini, backend/alembic/env.py
-- [ ] T010 [P] Create `Provider` model + migration in backend/app/db/models/provider.py
-- [ ] T011 [P] Create `Model` (pricing) model + migration in backend/app/db/models/model.py
-- [ ] T012 [P] Create `Application` model + migration in backend/app/db/models/application.py
-- [ ] T013 [P] Create `ApiKey` model + migration in backend/app/db/models/api_key.py
-- [ ] T014 Create `LLMRequest` model + migration (FKs to Provider/Model/Application/ApiKey, indexes per data-model.md) in backend/app/db/models/request.py (depends on T010, T011, T012, T013)
-- [ ] T015 Setup FastAPI app skeleton, pydantic-settings config, structured logging (structlog), and API router mounting in backend/app/main.py, backend/app/core/config.py, backend/app/core/logging.py, backend/app/api/router.py
-- [ ] T016 [P] Implement admin authentication (bcrypt password check against `ADMIN_PASSWORD_HASH`, secure HTTP-only session cookie) in backend/app/core/security.py
-- [ ] T017 [P] Implement common Pydantic schemas (pagination envelope, error envelope) in backend/app/schemas/common.py
-- [ ] T018 Implement health endpoints (`/api/v1/health`, `/health/live`, `/health/ready`) in backend/app/api/v1/health.py
-- [ ] T019 [P] Setup `/metrics` Prometheus endpoint and base HTTP metrics in backend/app/core/metrics.py
-- [ ] T020 [P] Setup CORS middleware with configurable origin allowlist in backend/app/main.py
+- [X] T009 Setup SQLAlchemy base + Alembic migrations framework in backend/app/db/base.py, backend/app/db/session.py, backend/alembic.ini, backend/alembic/env.py
+- [X] T010 [P] Create `Provider` model + migration in backend/app/db/models/provider.py
+- [X] T011 [P] Create `Model` (pricing) model + migration in backend/app/db/models/model.py
+- [X] T012 [P] Create `Application` model + migration in backend/app/db/models/application.py
+- [X] T013 [P] Create `ApiKey` model + migration in backend/app/db/models/api_key.py
+- [X] T014 Create `LLMRequest` model + migration (FKs to Provider/Model/Application/ApiKey, indexes per data-model.md) in backend/app/db/models/request.py (depends on T010, T011, T012, T013)
+- [X] T015 Setup FastAPI app skeleton, pydantic-settings config, structured logging (structlog), and API router mounting in backend/app/main.py, backend/app/core/config.py, backend/app/core/logging.py, backend/app/api/router.py
+- [X] T016 [P] Implement admin authentication (bcrypt password check against `ADMIN_PASSWORD_HASH`, secure HTTP-only session cookie) in backend/app/core/security.py
+- [X] T017 [P] Implement common Pydantic schemas (pagination envelope, error envelope) in backend/app/schemas/common.py
+- [X] T018 Implement health endpoints (`/api/v1/health`, `/health/live`, `/health/ready`) in backend/app/api/v1/health.py
+- [X] T019 [P] Setup `/metrics` Prometheus endpoint and base HTTP metrics in backend/app/core/metrics.py
+- [X] T020 [P] Setup CORS middleware with configurable origin allowlist in backend/app/main.py
 - [ ] T021 [P] Scaffold Next.js app shell (layout, navigation, TanStack Query client, typed API client wrapper) in frontend/app/layout.tsx, frontend/lib/api.ts, frontend/lib/types.ts
 
 **Checkpoint**: Foundation ready - user story implementation can now begin
@@ -66,22 +66,22 @@ description: "Task list for LLM Observability Platform (v0.1 Foundation)"
 
 ### Tests for User Story 1
 
-- [ ] T022 [P] [US1] Unit tests for cost calculation and pricing lookup (known price, unknown price → NULL, zero-cost provider → 0) in backend/tests/unit/test_cost_service.py, backend/tests/unit/test_pricing.py
-- [ ] T023 [P] [US1] Unit tests for telemetry normalization and redaction (token totals, error categorization, no prompt/response leakage) in backend/tests/unit/test_normalizer.py, backend/tests/unit/test_redaction.py
-- [ ] T024 [US1] Integration test: request through LiteLLM → telemetry collector → PostgreSQL row, for both success and failure/timeout paths in backend/tests/integration/test_telemetry_pipeline.py
+- [X] T022 [P] [US1] Unit tests for cost calculation and pricing lookup (known price, unknown price → NULL, zero-cost provider → 0) in backend/tests/unit/test_cost_service.py, backend/tests/unit/test_pricing.py
+- [X] T023 [P] [US1] Unit tests for telemetry normalization and redaction (token totals, error categorization, no prompt/response leakage) in backend/tests/unit/test_normalizer.py, backend/tests/unit/test_redaction.py
+- [X] T024 [US1] Integration test: request through LiteLLM → telemetry collector → PostgreSQL row, for both success and failure/timeout paths in backend/tests/integration/test_telemetry_pipeline.py
 
 ### Implementation for User Story 1
 
-- [ ] T025 [P] [US1] Implement pricing registry `get_model_pricing(provider, model)` in backend/app/providers/pricing.py
-- [ ] T026 [P] [US1] Implement provider registry in backend/app/providers/registry.py
-- [ ] T027 [US1] Implement normalized telemetry event schema in backend/app/telemetry/events.py
-- [ ] T028 [US1] Implement telemetry normalizer (token totals, status/error-category normalization) in backend/app/telemetry/normalizer.py (depends on T027)
-- [ ] T029 [US1] Implement redaction module enforcing default no-prompt/no-response persistence, honoring `STORE_PROMPTS`/`STORE_RESPONSES` in backend/app/telemetry/redaction.py
-- [ ] T030 [US1] Implement cost service (Decimal-based input/output/total cost, NULL-when-unknown, 0-when-configured-zero-cost) in backend/app/services/cost_service.py (depends on T025)
-- [ ] T031 [US1] Implement telemetry collector consuming LiteLLM's completion event/callback and persisting normalized `LLMRequest` rows, rejecting duplicate `request_id` in backend/app/telemetry/collector.py (depends on T014, T028, T029, T030)
-- [ ] T032 [US1] Wire LiteLLM proxy callback/webhook configuration to invoke the telemetry collector in litellm/config.yaml (verify against pinned LiteLLM version's actual callback API per research.md §2)
-- [ ] T033 [US1] Ensure requests for unconfigured provider/model return a clear, actionable error (FR-025) via LiteLLM config validation and backend error handling
-- [ ] T034 [US1] Add structured logging for telemetry recording (success/failure), excluding secrets/prompts/responses, in backend/app/telemetry/collector.py
+- [X] T025 [P] [US1] Implement pricing registry `get_model_pricing(provider, model)` in backend/app/providers/pricing.py
+- [X] T026 [P] [US1] Implement provider registry in backend/app/providers/registry.py
+- [X] T027 [US1] Implement normalized telemetry event schema in backend/app/telemetry/events.py
+- [X] T028 [US1] Implement telemetry normalizer (token totals, status/error-category normalization) in backend/app/telemetry/normalizer.py (depends on T027)
+- [X] T029 [US1] Implement redaction module enforcing default no-prompt/no-response persistence, honoring `STORE_PROMPTS`/`STORE_RESPONSES` in backend/app/telemetry/redaction.py
+- [X] T030 [US1] Implement cost service (Decimal-based input/output/total cost, NULL-when-unknown, 0-when-configured-zero-cost) in backend/app/services/cost_service.py (depends on T025)
+- [X] T031 [US1] Implement telemetry collector consuming LiteLLM's completion event/callback and persisting normalized `LLMRequest` rows, rejecting duplicate `request_id` in backend/app/telemetry/collector.py (depends on T014, T028, T029, T030)
+- [X] T032 [US1] Wire LiteLLM proxy callback/webhook configuration to invoke the telemetry collector in litellm/config.yaml (verify against pinned LiteLLM version's actual callback API per research.md §2)
+- [X] T033 [US1] Ensure requests for unconfigured provider/model return a clear, actionable error (FR-025) via LiteLLM config validation and backend error handling
+- [X] T034 [US1] Add structured logging for telemetry recording (success/failure), excluding secrets/prompts/responses, in backend/app/telemetry/collector.py
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently — sending a request results in an accurate, privacy-safe, correctly-priced record.
 
