@@ -1,0 +1,56 @@
+[project]
+name = "llm-lens-backend"
+version = "0.1.0"
+description = "LLM Lens FastAPI analytics backend"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "alembic>=1.15,<1.16",
+    "bcrypt>=4.2,<5",
+    "fastapi>=0.115,<0.116",
+    "httpx>=0.28,<0.29",
+    "itsdangerous>=2.2,<3",
+    "prometheus-client>=0.21,<0.22",
+    "psycopg[binary]>=3.2,<3.3",
+    "pydantic>=2.10,<3",
+    "pydantic-settings>=2.7,<3",
+    "sqlalchemy>=2.0,<2.1",
+    "structlog>=25.1,<26",
+    "uvicorn[standard]>=0.34,<0.35",
+]
+
+[dependency-groups]
+dev = [
+    "mypy>=1.14,<2",
+    "pytest>=8.3,<9",
+    "pytest-asyncio>=0.25,<0.26",
+    "pytest-cov>=6.0,<7",
+    "ruff>=0.9,<0.10",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["app", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "C4"]
+ignore = ["B008"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["app"]
+
+[tool.mypy]
+python_version = "3.12"
+plugins = ["pydantic.mypy"]
+strict = true
+warn_unused_ignores = true
+disallow_untyped_defs = true
+exclude = ["tests/"]
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]

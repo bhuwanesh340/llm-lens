@@ -1,0 +1,53 @@
+# LiteLLM Proxy configuration (T008, T032).
+#
+# Constitution Principle I: this file is the ONLY place provider
+# configuration lives. The FastAPI backend never calls provider SDKs
+# directly and never appears in this file's model_list.
+#
+# All secrets are referenced via `os.environ/VAR_NAME` — never hard-coded.
+
+model_list:
+  # --- OpenAI (cloud) ---
+  - model_name: gpt-4o-mini
+    litellm_params:
+      model: openai/gpt-4o-mini
+      api_key: os.environ/OPENAI_API_KEY
+
+  - model_name: gpt-4o
+    litellm_params:
+      model: openai/gpt-4o
+      api_key: os.environ/OPENAI_API_KEY
+
+  # --- Anthropic (cloud) ---
+  - model_name: claude-3-5-sonnet
+    litellm_params:
+      model: anthropic/claude-3-5-sonnet-20241022
+      api_key: os.environ/ANTHROPIC_API_KEY
+
+  # --- Google Gemini (cloud) ---
+  - model_name: gemini-1.5-pro
+    litellm_params:
+      model: gemini/gemini-1.5-pro
+      api_key: os.environ/GEMINI_API_KEY
+
+  # --- Ollama (local, zero-cost) ---
+  - model_name: llama3
+    litellm_params:
+      model: ollama/llama3
+      api_base: os.environ/OLLAMA_BASE_URL
+
+litellm_settings:
+  # Telemetry capture (T032, research.md §2): forwards every completed
+  # request (success or failure) to the backend's telemetry ingestion
+  # webhook. See custom_callbacks.py.
+  callbacks: custom_callbacks.proxy_handler_instance
+
+  # Defense in depth: never send prompt/response content to any *other*
+  # logging integration that might be added later (constitution Principle
+  # II). Our own callback receives raw content only to forward it, and the
+  # backend's redaction module (app/telemetry/redaction.py) is the single
+  # source of truth for whether it is ever persisted.
+  turn_off_message_logging: false
+
+general_settings:
+  master_key: os.environ/LITELLM_MASTER_KEY
