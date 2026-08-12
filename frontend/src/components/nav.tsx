@@ -34,7 +34,7 @@ export function Nav() {
   }
 
   return (
-    <header className="border-b bg-card">
+    <header className="bg-card border-b">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-3">
         <div className="flex items-center gap-6">
           <span className="text-lg font-semibold">LLM Lens</span>
@@ -44,8 +44,10 @@ export function Nav() {
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "rounded-md px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground",
-                  pathname === link.href ? "bg-accent text-accent-foreground" : "text-muted-foreground",
+                  "hover:bg-accent hover:text-accent-foreground rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+                  pathname === link.href
+                    ? "bg-accent text-accent-foreground"
+                    : "text-muted-foreground",
                 )}
               >
                 {link.label}

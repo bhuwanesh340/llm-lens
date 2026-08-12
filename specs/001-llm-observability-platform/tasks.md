@@ -25,9 +25,9 @@ description: "Task list for LLM Observability Platform (v0.1 Foundation)"
 
 - [X] T001 Create repository structure per plan.md (`backend/`, `frontend/`, `litellm/`, `docs/`, `examples/`, `scripts/`, root `docker-compose.yml`, `.env.example`)
 - [X] T002 Initialize backend Python 3.12 project and create a virtual environment where install with `uv` in backend/pyproject.toml (fastapi, sqlalchemy, alembic, pydantic, pydantic-settings, psycopg, httpx, structlog, prometheus-client, pytest, pytest-asyncio, ruff, mypy)
-- [ ] T003 [P] Initialize frontend Next.js 15 + TypeScript project with `pnpm` in frontend/package.json (tailwindcss, shadcn/ui, @tanstack/react-query, recharts, react-hook-form, zod, vitest, @testing-library/react, playwright, eslint, prettier)
+- [X] T003 [P] Initialize frontend Next.js 15 + TypeScript project with `pnpm` in frontend/package.json (tailwindcss, shadcn/ui, @tanstack/react-query, recharts, react-hook-form, zod, vitest, @testing-library/react, playwright, eslint, prettier)
 - [X] T004 [P] Configure backend linting/type-checking (ruff + mypy config) in backend/pyproject.toml
-- [ ] T005 [P] Configure frontend linting/formatting/strict TypeScript (eslint, prettier, tsconfig strict mode) in frontend/.eslintrc, frontend/tsconfig.json
+- [X] T005 [P] Configure frontend linting/formatting/strict TypeScript (eslint, prettier, tsconfig strict mode) in frontend/.eslintrc, frontend/tsconfig.json
 - [X] T006 Create docker-compose.yml with postgres, litellm, backend, frontend services, required health checks, and `depends_on` startup ordering (postgres → backend → litellm → frontend)
 - [X] T007 [P] Create .env.example with all variables (APP_*, POSTGRES_*, DATABASE_URL, LITELLM_PORT, LITELLM_MASTER_KEY, provider keys, OLLAMA_BASE_URL, NEXT_PUBLIC_API_URL, SECRET_KEY, ADMIN_EMAIL, ADMIN_PASSWORD_HASH, STORE_PROMPTS, STORE_RESPONSES, REQUEST_RETENTION_DAYS)
 - [X] T008 [P] Create litellm/config.yaml with example model_list entries for openai/anthropic/gemini/ollama, referencing env vars (no hard-coded keys)
@@ -52,7 +52,7 @@ description: "Task list for LLM Observability Platform (v0.1 Foundation)"
 - [X] T018 Implement health endpoints (`/api/v1/health`, `/health/live`, `/health/ready`) in backend/app/api/v1/health.py
 - [X] T019 [P] Setup `/metrics` Prometheus endpoint and base HTTP metrics in backend/app/core/metrics.py
 - [X] T020 [P] Setup CORS middleware with configurable origin allowlist in backend/app/main.py
-- [ ] T021 [P] Scaffold Next.js app shell (layout, navigation, TanStack Query client, typed API client wrapper) in frontend/app/layout.tsx, frontend/lib/api.ts, frontend/lib/types.ts
+- [X] T021 [P] Scaffold Next.js app shell (layout, navigation, TanStack Query client, typed API client wrapper) in frontend/app/layout.tsx, frontend/lib/api.ts, frontend/lib/types.ts
 
 **Checkpoint**: Foundation ready - user story implementation can now begin
 
@@ -95,24 +95,24 @@ description: "Task list for LLM Observability Platform (v0.1 Foundation)"
 
 ### Tests for User Story 2
 
-- [ ] T035 [P] [US2] API tests for `/api/v1/overview` in backend/tests/api/test_overview.py
-- [ ] T036 [P] [US2] API tests for `/api/v1/usage`, `/usage/timeseries`, `/usage/by-model`, `/usage/by-provider` in backend/tests/api/test_usage.py
-- [ ] T037 [P] [US2] API tests for `/api/v1/costs`, `/costs/timeseries`, `/costs/by-model`, `/costs/by-provider`, `/costs/by-application` in backend/tests/api/test_costs.py
-- [ ] T038 [P] [US2] API tests for `/api/v1/models`, `/models/{model_id}` in backend/tests/api/test_models.py
+- [X] T035 [P] [US2] API tests for `/api/v1/overview` in backend/tests/api/test_overview.py
+- [X] T036 [P] [US2] API tests for `/api/v1/usage`, `/usage/timeseries`, `/usage/by-model`, `/usage/by-provider` in backend/tests/api/test_usage.py
+- [X] T037 [P] [US2] API tests for `/api/v1/costs`, `/costs/timeseries`, `/costs/by-model`, `/costs/by-provider`, `/costs/by-application` in backend/tests/api/test_costs.py
+- [X] T038 [P] [US2] API tests for `/api/v1/models`, `/models/{model_id}` in backend/tests/api/test_models.py
 
 ### Implementation for User Story 2
 
-- [ ] T039 [P] [US2] Implement analytics aggregation service (time-range filtering, group-by provider/model/application/day) in backend/app/services/analytics_service.py
-- [ ] T040 [P] [US2] Implement usage aggregation service (tokens by model/provider, tokens-per-request) in backend/app/services/usage_service.py
-- [ ] T041 [US2] Implement `GET /api/v1/overview` endpoint in backend/app/api/v1/overview.py (depends on T039)
-- [ ] T042 [P] [US2] Implement `/api/v1/usage*` endpoints in backend/app/api/v1/usage.py (depends on T040)
-- [ ] T043 [P] [US2] Implement `/api/v1/costs*` endpoints in backend/app/api/v1/costs.py (depends on T039)
-- [ ] T044 [US2] Implement `/api/v1/models`, `/models/{model_id}` endpoints (incl. avg latency, P95 latency, error rate per model) in backend/app/api/v1/models.py (depends on T039)
-- [ ] T045 [P] [US2] Build frontend overview dashboard page (cards, time-range filter, charts) in frontend/app/dashboard/page.tsx, frontend/components/dashboard/
-- [ ] T046 [P] [US2] Build frontend usage analytics page in frontend/app/usage/page.tsx, frontend/components/charts/
-- [ ] T047 [P] [US2] Build frontend cost analytics page in frontend/app/costs/page.tsx
-- [ ] T048 [P] [US2] Build frontend model analytics page in frontend/app/models/page.tsx
-- [ ] T049 [US2] Wire TanStack Query hooks and typed API client calls for overview/usage/costs/models in frontend/lib/api.ts, frontend/hooks/ (depends on T045, T046, T047, T048)
+- [X] T039 [P] [US2] Implement analytics aggregation service (time-range filtering, group-by provider/model/application/day) in backend/app/services/analytics_service.py
+- [X] T040 [P] [US2] Implement usage aggregation service (tokens by model/provider, tokens-per-request) in backend/app/services/usage_service.py
+- [X] T041 [US2] Implement `GET /api/v1/overview` endpoint in backend/app/api/v1/overview.py (depends on T039)
+- [X] T042 [P] [US2] Implement `/api/v1/usage*` endpoints in backend/app/api/v1/usage.py (depends on T040)
+- [X] T043 [P] [US2] Implement `/api/v1/costs*` endpoints in backend/app/api/v1/costs.py (depends on T039)
+- [X] T044 [US2] Implement `/api/v1/models`, `/models/{model_id}` endpoints (incl. avg latency, P95 latency, error rate per model) in backend/app/api/v1/models.py (depends on T039)
+- [X] T045 [P] [US2] Build frontend overview dashboard page (cards, time-range filter, charts) in frontend/app/dashboard/page.tsx, frontend/components/dashboard/
+- [X] T046 [P] [US2] Build frontend usage analytics page in frontend/app/usage/page.tsx, frontend/components/charts/
+- [X] T047 [P] [US2] Build frontend cost analytics page in frontend/app/costs/page.tsx
+- [X] T048 [P] [US2] Build frontend model analytics page in frontend/app/models/page.tsx
+- [X] T049 [US2] Wire TanStack Query hooks and typed API client calls for overview/usage/costs/models in frontend/lib/api.ts, frontend/hooks/ (depends on T045, T046, T047, T048)
 
 **Checkpoint**: At this point, User Stories 1 AND 2 should both work independently
 
@@ -126,14 +126,14 @@ description: "Task list for LLM Observability Platform (v0.1 Foundation)"
 
 ### Tests for User Story 3
 
-- [ ] T050 [P] [US3] API tests for `/api/v1/requests` list (pagination, filtering, sorting) and `/api/v1/requests/{request_id}` detail (incl. privacy default) in backend/tests/api/test_requests.py
+- [X] T050 [P] [US3] API tests for `/api/v1/requests` list (pagination, filtering, sorting) and `/api/v1/requests/{request_id}` detail (incl. privacy default) in backend/tests/api/test_requests.py
 
 ### Implementation for User Story 3
 
-- [ ] T051 [US3] Implement `GET /api/v1/requests` paginated/filterable/sortable list endpoint in backend/app/api/v1/requests.py
-- [ ] T052 [US3] Implement `GET /api/v1/requests/{request_id}` detail endpoint, excluding prompt/response unless content logging enabled, including error info when present (depends on T051)
-- [ ] T053 [P] [US3] Build frontend request explorer table (pagination, filters, sorting) in frontend/app/requests/page.tsx, frontend/components/tables/
-- [ ] T054 [US3] Build frontend request detail view in frontend/app/requests/[request_id]/page.tsx (depends on T053)
+- [X] T051 [US3] Implement `GET /api/v1/requests` paginated/filterable/sortable list endpoint in backend/app/api/v1/requests.py
+- [X] T052 [US3] Implement `GET /api/v1/requests/{request_id}` detail endpoint, excluding prompt/response unless content logging enabled, including error info when present (depends on T051)
+- [X] T053 [P] [US3] Build frontend request explorer table (pagination, filters, sorting) in frontend/app/requests/page.tsx, frontend/components/tables/
+- [X] T054 [US3] Build frontend request detail view in frontend/app/requests/[request_id]/page.tsx (depends on T053)
 
 **Checkpoint**: All of User Stories 1, 2, AND 3 should now work independently
 
@@ -147,14 +147,14 @@ description: "Task list for LLM Observability Platform (v0.1 Foundation)"
 
 ### Tests for User Story 4
 
-- [ ] T055 [P] [US4] API tests for applications CRUD and the "unassigned" grouping behavior in backend/tests/api/test_applications.py
+- [X] T055 [P] [US4] API tests for applications CRUD and the "unassigned" grouping behavior in backend/tests/api/test_applications.py
 
 ### Implementation for User Story 4
 
-- [ ] T056 [P] [US4] Implement application service (CRUD + attribution aggregation incl. "unassigned" bucket) in backend/app/services/application_service.py
-- [ ] T057 [US4] Implement `GET/POST/PATCH/DELETE /api/v1/applications` endpoints in backend/app/api/v1/applications.py (depends on T056)
-- [ ] T058 [P] [US4] Build frontend applications analytics page in frontend/app/applications/page.tsx
-- [ ] T059 [US4] Add application/environment filter controls to dashboard, usage, costs, and requests views in frontend/components/filters/ (depends on T045-T048, T053)
+- [X] T056 [P] [US4] Implement application service (CRUD + attribution aggregation incl. "unassigned" bucket) in backend/app/services/application_service.py
+- [X] T057 [US4] Implement `GET/POST/PATCH/DELETE /api/v1/applications` endpoints in backend/app/api/v1/applications.py (depends on T056)
+- [X] T058 [P] [US4] Build frontend applications analytics page in frontend/app/applications/page.tsx
+- [X] T059 [US4] Add application/environment filter controls to dashboard, usage, costs, and requests views in frontend/components/filters/ (depends on T045-T048, T053)
 
 **Checkpoint**: All of User Stories 1-4 should now work independently
 
@@ -168,13 +168,13 @@ description: "Task list for LLM Observability Platform (v0.1 Foundation)"
 
 ### Tests for User Story 5
 
-- [ ] T060 [P] [US5] API tests for `/api/v1/errors` (+ by-provider/by-model/by-code variants) in backend/tests/api/test_errors.py
+- [X] T060 [P] [US5] API tests for `/api/v1/errors` (+ by-provider/by-model/by-code variants) in backend/tests/api/test_errors.py
 
 ### Implementation for User Story 5
 
-- [ ] T061 [US5] Extend analytics service with error aggregation (count, rate, by provider/model/category) in backend/app/services/analytics_service.py
-- [ ] T062 [US5] Implement `GET /api/v1/errors` (+ variants) endpoints in backend/app/api/v1/errors.py (depends on T061)
-- [ ] T063 [P] [US5] Build frontend error analytics page in frontend/app/errors/page.tsx
+- [X] T061 [US5] Extend analytics service with error aggregation (count, rate, by provider/model/category) in backend/app/services/analytics_service.py
+- [X] T062 [US5] Implement `GET /api/v1/errors` (+ variants) endpoints in backend/app/api/v1/errors.py (depends on T061)
+- [X] T063 [P] [US5] Build frontend error analytics page in frontend/app/errors/page.tsx
 
 **Checkpoint**: All 5 user stories should now be independently functional
 

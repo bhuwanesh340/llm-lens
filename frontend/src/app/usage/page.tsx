@@ -39,7 +39,9 @@ export default function UsagePage() {
     <div className="flex flex-col gap-6">
       <div>
         <h1 className="text-2xl font-semibold">Usage</h1>
-        <p className="text-muted-foreground">Token and request volume across providers and models.</p>
+        <p className="text-muted-foreground">
+          Token and request volume across providers and models.
+        </p>
       </div>
 
       <FilterBar filters={filters} onChange={setFilters} onClear={clearFilters} />
@@ -53,7 +55,7 @@ export default function UsagePage() {
         ].map((stat) => (
           <Card key={stat.label}>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
+              <CardTitle className="text-muted-foreground text-sm font-medium">
                 {stat.label}
               </CardTitle>
             </CardHeader>
@@ -95,12 +97,21 @@ function UsageBreakdownTable({
   rows,
   isLoading,
 }: {
-  rows?: { key: string; input_tokens: number; output_tokens: number; total_tokens: number; request_count: number; avg_tokens_per_request: number }[];
+  rows?: {
+    key: string;
+    input_tokens: number;
+    output_tokens: number;
+    total_tokens: number;
+    request_count: number;
+    avg_tokens_per_request: number;
+  }[];
   isLoading: boolean;
 }) {
   if (isLoading) return <Skeleton className="h-40 w-full" />;
   if (!rows || rows.length === 0) {
-    return <p className="py-8 text-center text-sm text-muted-foreground">No data for this range.</p>;
+    return (
+      <p className="text-muted-foreground py-8 text-center text-sm">No data for this range.</p>
+    );
   }
   return (
     <Table>

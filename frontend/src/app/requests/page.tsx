@@ -36,7 +36,9 @@ export default function RequestsPage() {
     <div className="flex flex-col gap-6">
       <div>
         <h1 className="text-2xl font-semibold">Requests</h1>
-        <p className="text-muted-foreground">Browse individual LLM requests. No prompt/response content is stored.</p>
+        <p className="text-muted-foreground">
+          Browse individual LLM requests. No prompt/response content is stored.
+        </p>
       </div>
 
       <FilterBar
@@ -56,7 +58,7 @@ export default function RequestsPage() {
           {requestsQuery.isLoading ? (
             <Skeleton className="h-64 w-full" />
           ) : !data || data.items.length === 0 ? (
-            <p className="py-8 text-center text-sm text-muted-foreground">
+            <p className="text-muted-foreground py-8 text-center text-sm">
               No requests for this range.
             </p>
           ) : (
@@ -99,7 +101,7 @@ export default function RequestsPage() {
                 </TableBody>
               </Table>
               <div className="mt-4 flex items-center justify-between">
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   Page {data.meta.page} of {data.meta.total_pages} ({data.meta.total_items} total)
                 </p>
                 <div className="flex gap-2">

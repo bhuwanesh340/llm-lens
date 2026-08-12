@@ -85,7 +85,9 @@ function CostBreakdownTable({
 }) {
   if (isLoading) return <Skeleton className="h-40 w-full" />;
   if (!rows || rows.length === 0) {
-    return <p className="py-8 text-center text-sm text-muted-foreground">No data for this range.</p>;
+    return (
+      <p className="text-muted-foreground py-8 text-center text-sm">No data for this range.</p>
+    );
   }
   return (
     <Table>

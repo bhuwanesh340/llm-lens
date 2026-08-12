@@ -10,11 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatCost, formatLatency, formatNumber, formatPercent } from "@/lib/format";
 
-export default function ModelDetailPage({
-  params,
-}: {
-  params: Promise<{ model: string }>;
-}) {
+export default function ModelDetailPage({ params }: { params: Promise<{ model: string }> }) {
   const { model } = use(params);
   const modelName = decodeURIComponent(model);
   const { filters, setFilters, clearFilters } = useRangeFilters();
@@ -32,7 +28,7 @@ export default function ModelDetailPage({
         <div>
           <Link
             href="/models"
-            className="mb-1 inline-block text-sm text-muted-foreground hover:text-foreground hover:underline"
+            className="text-muted-foreground hover:text-foreground mb-1 inline-block text-sm hover:underline"
           >
             ← Back to models
           </Link>
@@ -46,7 +42,7 @@ export default function ModelDetailPage({
       {detailQuery.isLoading ? (
         <Skeleton className="h-48 w-full" />
       ) : detailQuery.isError ? (
-        <p className="text-sm text-destructive">No requests found for this model in this range.</p>
+        <p className="text-destructive text-sm">No requests found for this model in this range.</p>
       ) : detail ? (
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
           {[
@@ -64,7 +60,7 @@ export default function ModelDetailPage({
           ].map((stat) => (
             <Card key={stat.label}>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
+                <CardTitle className="text-muted-foreground text-sm font-medium">
                   {stat.label}
                 </CardTitle>
               </CardHeader>

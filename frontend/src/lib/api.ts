@@ -193,8 +193,7 @@ export const applicationsApi = {
       method: "PATCH",
       body: JSON.stringify(payload),
     }),
-  delete: (id: string) =>
-    request<void>(`/api/v1/applications/${id}`, { method: "DELETE" }),
+  delete: (id: string) => request<void>(`/api/v1/applications/${id}`, { method: "DELETE" }),
 };
 
 // --- Errors -------------------------------------------------------------

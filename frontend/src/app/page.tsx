@@ -52,8 +52,8 @@ export default function DashboardPage() {
 
       {overview?.unknown_cost_count ? (
         <p className="text-sm text-amber-600">
-          {overview.unknown_cost_count} request(s) have unknown pricing and are excluded from
-          cost totals.
+          {overview.unknown_cost_count} request(s) have unknown pricing and are excluded from cost
+          totals.
         </p>
       ) : null}
 
@@ -61,7 +61,7 @@ export default function DashboardPage() {
         {stats.map((stat) => (
           <Card key={stat.label}>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
+              <CardTitle className="text-muted-foreground text-sm font-medium">
                 {stat.label}
               </CardTitle>
             </CardHeader>

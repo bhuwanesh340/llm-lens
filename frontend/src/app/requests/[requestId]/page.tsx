@@ -10,11 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { formatCost, formatDateTime, formatLatency } from "@/lib/format";
 
-export default function RequestDetailPage({
-  params,
-}: {
-  params: Promise<{ requestId: string }>;
-}) {
+export default function RequestDetailPage({ params }: { params: Promise<{ requestId: string }> }) {
   const { requestId } = use(params);
   const decodedId = decodeURIComponent(requestId);
 
@@ -30,17 +26,17 @@ export default function RequestDetailPage({
       <div>
         <Link
           href="/requests"
-          className="mb-1 inline-block text-sm text-muted-foreground hover:text-foreground hover:underline"
+          className="text-muted-foreground hover:text-foreground mb-1 inline-block text-sm hover:underline"
         >
           ← Back to requests
         </Link>
-        <h1 className="break-all text-2xl font-semibold">{decodedId}</h1>
+        <h1 className="text-2xl font-semibold break-all">{decodedId}</h1>
       </div>
 
       {detailQuery.isLoading ? (
         <Skeleton className="h-96 w-full" />
       ) : detailQuery.isError || !detail ? (
-        <p className="text-sm text-destructive">Request not found.</p>
+        <p className="text-destructive text-sm">Request not found.</p>
       ) : (
         <>
           <Card>
@@ -97,7 +93,7 @@ export default function RequestDetailPage({
                 <CardTitle>Metadata</CardTitle>
               </CardHeader>
               <CardContent>
-                <pre className="overflow-x-auto rounded-md bg-muted p-4 text-xs">
+                <pre className="bg-muted overflow-x-auto rounded-md p-4 text-xs">
                   {JSON.stringify(detail.metadata, null, 2)}
                 </pre>
               </CardContent>
@@ -112,7 +108,7 @@ export default function RequestDetailPage({
 function Field({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex flex-col gap-1">
-      <span className="text-xs font-medium uppercase text-muted-foreground">{label}</span>
+      <span className="text-muted-foreground text-xs font-medium uppercase">{label}</span>
       <span className="text-sm">{value}</span>
       <Separator className="mt-1" />
     </div>

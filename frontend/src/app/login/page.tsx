@@ -36,7 +36,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/30 px-4">
+    <div className="bg-muted/30 flex min-h-screen items-center justify-center px-4">
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle>LLM Lens</CardTitle>
@@ -66,7 +66,7 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            {error ? <p className="text-sm text-destructive">{error}</p> : null}
+            {error ? <p className="text-destructive text-sm">{error}</p> : null}
             <Button type="submit" disabled={isSubmitting} className="mt-2">
               {isSubmitting ? "Signing in..." : "Sign in"}
             </Button>

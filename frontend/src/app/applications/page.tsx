@@ -103,7 +103,12 @@ export default function ApplicationsPage() {
             >
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="app-name">Name</Label>
-                <Input id="app-name" required value={name} onChange={(e) => setName(e.target.value)} />
+                <Input
+                  id="app-name"
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
               </div>
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="app-slug">Slug</Label>
@@ -133,7 +138,7 @@ export default function ApplicationsPage() {
                   onChange={(e) => setEnvironment(e.target.value)}
                 />
               </div>
-              {formError ? <p className="text-sm text-destructive">{formError}</p> : null}
+              {formError ? <p className="text-destructive text-sm">{formError}</p> : null}
               <DialogFooter>
                 <Button type="submit" disabled={createMutation.isPending}>
                   {createMutation.isPending ? "Creating..." : "Create"}
@@ -152,7 +157,7 @@ export default function ApplicationsPage() {
           {applicationsQuery.isLoading ? (
             <Skeleton className="h-48 w-full" />
           ) : !applicationsQuery.data || applicationsQuery.data.length === 0 ? (
-            <p className="py-8 text-center text-sm text-muted-foreground">
+            <p className="text-muted-foreground py-8 text-center text-sm">
               No applications yet. Create one to start tagging requests.
             </p>
           ) : (

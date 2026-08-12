@@ -44,7 +44,9 @@ export default function ErrorsPage() {
     <div className="flex flex-col gap-6">
       <div>
         <h1 className="text-2xl font-semibold">Errors</h1>
-        <p className="text-muted-foreground">Failure rates broken down by provider, model, and error code.</p>
+        <p className="text-muted-foreground">
+          Failure rates broken down by provider, model, and error code.
+        </p>
       </div>
 
       <FilterBar filters={filters} onChange={setFilters} onClear={clearFilters} />
@@ -57,7 +59,7 @@ export default function ErrorsPage() {
         ].map((stat) => (
           <Card key={stat.label}>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
+              <CardTitle className="text-muted-foreground text-sm font-medium">
                 {stat.label}
               </CardTitle>
             </CardHeader>
@@ -108,7 +110,9 @@ function ErrorBreakdownTable({
 }) {
   if (isLoading) return <Skeleton className="h-40 w-full" />;
   if (!rows || rows.length === 0) {
-    return <p className="py-8 text-center text-sm text-muted-foreground">No data for this range.</p>;
+    return (
+      <p className="text-muted-foreground py-8 text-center text-sm">No data for this range.</p>
+    );
   }
   return (
     <Table>

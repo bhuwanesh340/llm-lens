@@ -41,7 +41,7 @@ export default function ModelsPage() {
           {modelsQuery.isLoading ? (
             <Skeleton className="h-64 w-full" />
           ) : !modelsQuery.data || modelsQuery.data.length === 0 ? (
-            <p className="py-8 text-center text-sm text-muted-foreground">
+            <p className="text-muted-foreground py-8 text-center text-sm">
               No model activity for this range.
             </p>
           ) : (
@@ -71,8 +71,12 @@ export default function ModelsPage() {
                     <TableCell>{row.provider}</TableCell>
                     <TableCell className="text-right">{formatNumber(row.request_count)}</TableCell>
                     <TableCell className="text-right">{formatCost(row.total_cost)}</TableCell>
-                    <TableCell className="text-right">{formatLatency(row.avg_latency_ms)}</TableCell>
-                    <TableCell className="text-right">{formatLatency(row.p95_latency_ms)}</TableCell>
+                    <TableCell className="text-right">
+                      {formatLatency(row.avg_latency_ms)}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {formatLatency(row.p95_latency_ms)}
+                    </TableCell>
                     <TableCell className="text-right">{formatPercent(row.error_rate)}</TableCell>
                   </TableRow>
                 ))}

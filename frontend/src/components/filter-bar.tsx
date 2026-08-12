@@ -14,7 +14,7 @@ interface FilterBarProps {
 /** Shared date-range + provider/model/environment filter controls (T059). */
 export function FilterBar({ filters, onChange, onClear }: FilterBarProps) {
   return (
-    <div className="flex flex-wrap items-end gap-4 rounded-lg border bg-card p-4">
+    <div className="bg-card flex flex-wrap items-end gap-4 rounded-lg border p-4">
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="filter-from">From</Label>
         <Input
