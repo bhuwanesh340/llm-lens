@@ -5,9 +5,10 @@ input, including environment configuration, validated via Pydantic).
 from __future__ import annotations
 
 from functools import lru_cache
+from typing import Annotated
 
 from pydantic import Field, field_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -38,7 +39,10 @@ class Settings(BaseSettings):
     session_max_age_seconds: int = Field(default=60 * 60 * 24 * 7, alias="SESSION_MAX_AGE_SECONDS")
 
     # --- CORS ---
-    cors_allow_origins: list[str] = Field(
+    # NoDecode: env value is a plain comma-separated string, not JSON — skip
+    # pydantic-settings' default JSON-decode-for-complex-types behavior so the
+    # `_split_csv` validator below receives the raw string.
+    cors_allow_origins: Annotated[list[str], NoDecode] = Field(
         default_factory=lambda: ["http://localhost:3000"],
         alias="CORS_ALLOW_ORIGINS",
     )
