@@ -15,6 +15,7 @@ from __future__ import annotations
 import os
 import uuid
 from datetime import datetime, timezone
+from json import dumps
 from typing import Any
 
 import httpx
@@ -56,6 +57,16 @@ def _extract_metadata(kwargs: dict[str, Any]) -> dict[str, Any]:
     return litellm_params.get("metadata") or {}
 
 
+def _json_safe(value: Any) -> Any:
+    if value is None or isinstance(value, (str, int, float, bool)):
+        return value
+    if isinstance(value, dict):
+        return {str(key): _json_safe(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple, set)):
+        return [_json_safe(item) for item in value]
+    return str(value)
+
+
 def _build_base_payload(
     kwargs: dict[str, Any], start_time: datetime, end_time: datetime
 ) -> dict[str, Any]:
@@ -70,18 +81,21 @@ def _build_base_payload(
         "created_at": start_time.astimezone(timezone.utc).isoformat(),
         "completed_at": end_time.astimezone(timezone.utc).isoformat(),
         "latency_ms": latency_ms,
-        "application_id": metadata.get("application_id"),
-        "environment": metadata.get("environment"),
-        "api_key_id": metadata.get("api_key_id"),
-        "metadata": {k: v for k, v in metadata.items() if k not in {"application_id", "environment", "api_key_id"}},
+        "application_id": _json_safe(metadata.get("application_id")),
+        "environment": _json_safe(metadata.get("environment")),
+        "api_key_id": _json_safe(metadata.get("api_key_id")),
+        "metadata": _json_safe(
+            {k: v for k, v in metadata.items() if k not in {"application_id", "environment", "api_key_id"}}
+        ),
     }
 
 
 async def _post_event(payload: dict[str, Any]) -> None:
     headers = {"X-Internal-Token": LITELLM_CALLBACK_TOKEN, "Content-Type": "application/json"}
+    body = dumps(payload, ensure_ascii=False, allow_nan=False, default=str)
     async with httpx.AsyncClient(timeout=5.0) as client:
         try:
-            await client.post(BACKEND_TELEMETRY_URL, json=payload, headers=headers)
+            await client.post(BACKEND_TELEMETRY_URL, content=body, headers=headers)
         except httpx.HTTPError:
             # Telemetry must never break the LLM response path (plan.md
             # Performance Goals). Failures here are swallowed; operators can

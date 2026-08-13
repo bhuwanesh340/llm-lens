@@ -36,6 +36,11 @@ model_list:
       model: ollama/llama3
       api_base: os.environ/OLLAMA_BASE_URL
 
+  - model_name: gemma3:1b
+    litellm_params:
+      model: ollama/gemma3:1b
+      api_base: os.environ/OLLAMA_BASE_URL
+
 litellm_settings:
   # Telemetry capture (T032, research.md §2): forwards every completed
   # request (success or failure) to the backend's telemetry ingestion
