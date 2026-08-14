@@ -4,7 +4,7 @@ import { useCallback, useMemo } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { RangeFilters } from "@/lib/types";
 
-const FILTER_KEYS = ["from", "to", "provider", "model", "application_id", "environment"] as const;
+const FILTER_KEYS = ["from", "to", "provider", "model", "project_id", "environment"] as const;
 
 /**
  * Reads/writes the shared time-range + entity filters from the URL query

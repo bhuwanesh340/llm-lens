@@ -6,9 +6,9 @@
  */
 
 import type {
-  ApplicationCreateInput,
-  ApplicationResponse,
-  ApplicationUpdateInput,
+  ProjectCreateInput,
+  ProjectResponse,
+  ProjectUpdateInput,
   CostBreakdownItem,
   CostTimeseriesItem,
   ErrorBreakdownItem,
@@ -61,7 +61,7 @@ function rangeFiltersToParams(filters?: RangeFilters): Record<string, string | u
     to: filters.to,
     provider: filters.provider,
     model: filters.model,
-    application_id: filters.application_id,
+    project_id: filters.project_id,
     environment: filters.environment,
   };
 }
@@ -147,9 +147,9 @@ export const costsApi = {
     request<CostBreakdownItem[]>(
       `/api/v1/costs/by-provider${buildQuery(rangeFiltersToParams(filters))}`,
     ),
-  byApplication: (filters?: RangeFilters) =>
+  byProject: (filters?: RangeFilters) =>
     request<CostBreakdownItem[]>(
-      `/api/v1/costs/by-application${buildQuery(rangeFiltersToParams(filters))}`,
+      `/api/v1/costs/by-project${buildQuery(rangeFiltersToParams(filters))}`,
     ),
 };
 
@@ -178,22 +178,22 @@ export const requestsApi = {
     request<RequestDetail>(`/api/v1/requests/${encodeURIComponent(requestId)}`),
 };
 
-// --- Applications -------------------------------------------------------
+// --- Projects -----------------------------------------------------------
 
-export const applicationsApi = {
-  list: () => request<ApplicationResponse[]>("/api/v1/applications"),
-  get: (id: string) => request<ApplicationResponse>(`/api/v1/applications/${id}`),
-  create: (payload: ApplicationCreateInput) =>
-    request<ApplicationResponse>("/api/v1/applications", {
+export const projectsApi = {
+  list: () => request<ProjectResponse[]>("/api/v1/projects"),
+  get: (id: string) => request<ProjectResponse>(`/api/v1/projects/${id}`),
+  create: (payload: ProjectCreateInput) =>
+    request<ProjectResponse>("/api/v1/projects", {
       method: "POST",
       body: JSON.stringify(payload),
     }),
-  update: (id: string, payload: ApplicationUpdateInput) =>
-    request<ApplicationResponse>(`/api/v1/applications/${id}`, {
+  update: (id: string, payload: ProjectUpdateInput) =>
+    request<ProjectResponse>(`/api/v1/projects/${id}`, {
       method: "PATCH",
       body: JSON.stringify(payload),
     }),
-  delete: (id: string) => request<void>(`/api/v1/applications/${id}`, { method: "DELETE" }),
+  delete: (id: string) => request<void>(`/api/v1/projects/${id}`, { method: "DELETE" }),
 };
 
 // --- Errors -------------------------------------------------------------

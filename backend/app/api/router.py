@@ -5,13 +5,13 @@ from __future__ import annotations
 from fastapi import APIRouter
 
 from app.api.v1 import (
-    applications,
     auth,
     costs,
     errors,
     health,
     models,
     overview,
+    projects,
     requests,
     telemetry,
     usage,
@@ -26,5 +26,5 @@ api_router.include_router(usage.router)
 api_router.include_router(costs.router)
 api_router.include_router(models.router)
 api_router.include_router(requests.router)
-api_router.include_router(applications.router)
+api_router.include_router(projects.router)
 api_router.include_router(errors.router)

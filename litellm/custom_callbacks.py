@@ -57,6 +57,10 @@ def _extract_metadata(kwargs: dict[str, Any]) -> dict[str, Any]:
     return litellm_params.get("metadata") or {}
 
 
+# Promoted to top-level telemetry fields rather than free-form metadata.
+_RESERVED_METADATA_KEYS = {"project", "project_id", "environment", "api_key_id"}
+
+
 def _json_safe(value: Any) -> Any:
     if value is None or isinstance(value, (str, int, float, bool)):
         return value
@@ -81,11 +85,12 @@ def _build_base_payload(
         "created_at": start_time.astimezone(timezone.utc).isoformat(),
         "completed_at": end_time.astimezone(timezone.utc).isoformat(),
         "latency_ms": latency_ms,
-        "application_id": _json_safe(metadata.get("application_id")),
+        "project": _json_safe(metadata.get("project")),
+        "project_id": _json_safe(metadata.get("project_id")),
         "environment": _json_safe(metadata.get("environment")),
         "api_key_id": _json_safe(metadata.get("api_key_id")),
         "metadata": _json_safe(
-            {k: v for k, v in metadata.items() if k not in {"application_id", "environment", "api_key_id"}}
+            {k: v for k, v in metadata.items() if k not in _RESERVED_METADATA_KEYS}
         ),
     }
 

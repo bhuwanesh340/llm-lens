@@ -23,8 +23,8 @@ class ApiKey(Base):
     key_hash: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
     key_prefix: Mapped[str] = mapped_column(String(16), nullable=False, index=True)
     name: Mapped[str] = mapped_column(String(128), nullable=False)
-    application_id: Mapped[uuid.UUID | None] = mapped_column(
-        ForeignKey("applications.id", ondelete="SET NULL"), nullable=True, index=True
+    project_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("projects.id", ondelete="CASCADE"), nullable=True, index=True
     )
     enabled: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     created_at: Mapped[datetime] = mapped_column(

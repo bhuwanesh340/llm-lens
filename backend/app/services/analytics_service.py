@@ -119,8 +119,8 @@ def get_costs_by_provider(db: Session, filters: RangeFilters) -> list[CostBreakd
     return _cost_breakdown_by(db, filters, "provider")
 
 
-def get_costs_by_application(db: Session, filters: RangeFilters) -> list[CostBreakdownRow]:
-    return _cost_breakdown_by(db, filters, "application_id")
+def get_costs_by_project(db: Session, filters: RangeFilters) -> list[CostBreakdownRow]:
+    return _cost_breakdown_by(db, filters, "project_id")
 
 
 @dataclass(frozen=True)

@@ -38,17 +38,17 @@ def apply_request_filters(stmt: Select[Any], filters: RangeFilters) -> Select[An
         conditions.append(LLMRequest.model == filters.model)
     if filters.environment is not None:
         conditions.append(LLMRequest.environment == filters.environment)
-    if filters.application_id is not None:
-        if filters.application_id == "unassigned":
-            conditions.append(LLMRequest.application_id.is_(None))
+    if filters.project_id is not None:
+        if filters.project_id == "unassigned":
+            conditions.append(LLMRequest.project_id.is_(None))
         else:
             try:
-                app_uuid = uuid.UUID(filters.application_id)
+                project_uuid = uuid.UUID(filters.project_id)
             except ValueError as exc:
                 raise InvalidFilterError(
-                    "'application_id' must be a valid UUID or 'unassigned'"
+                    "'project_id' must be a valid UUID or 'unassigned'"
                 ) from exc
-            conditions.append(LLMRequest.application_id == app_uuid)
+            conditions.append(LLMRequest.project_id == project_uuid)
 
     if conditions:
         stmt = stmt.where(*conditions)

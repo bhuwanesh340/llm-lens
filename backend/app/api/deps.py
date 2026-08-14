@@ -28,7 +28,7 @@ class RangeFilters:
     date_to: datetime | None
     provider: str | None
     model: str | None
-    application_id: str | None
+    project_id: str | None
     environment: str | None
 
 
@@ -37,7 +37,7 @@ def get_range_filters(
     to: datetime | None = Query(None, alias="to"),
     provider: str | None = Query(None),
     model: str | None = Query(None),
-    application_id: str | None = Query(None),
+    project_id: str | None = Query(None),
     environment: str | None = Query(None),
 ) -> RangeFilters:
     return RangeFilters(
@@ -45,7 +45,7 @@ def get_range_filters(
         date_to=to,
         provider=provider,
         model=model,
-        application_id=application_id,
+        project_id=project_id,
         environment=environment,
     )
 

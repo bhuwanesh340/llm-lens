@@ -1,7 +1,7 @@
 """`LLMRequest` model (T014) — data-model.md `llm_requests` table.
 
 The core observability unit: one row per attempted LLM call (FR-003, FR-004).
-Depends on Provider/Model/Application/ApiKey (T010-T013).
+Depends on Provider/Model/Project/ApiKey (T010-T013).
 """
 
 from __future__ import annotations
@@ -51,7 +51,7 @@ class LLMRequest(Base):
         Index("ix_llm_requests_created_at", "created_at"),
         Index("ix_llm_requests_provider", "provider"),
         Index("ix_llm_requests_model", "model"),
-        Index("ix_llm_requests_application_id", "application_id"),
+        Index("ix_llm_requests_project_id", "project_id"),
         Index("ix_llm_requests_status", "status"),
     )
 
@@ -80,8 +80,8 @@ class LLMRequest(Base):
     latency_ms: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     ttft_ms: Mapped[int | None] = mapped_column(Integer, nullable=True)
 
-    application_id: Mapped[uuid.UUID | None] = mapped_column(
-        ForeignKey("applications.id", ondelete="SET NULL"), nullable=True
+    project_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("projects.id", ondelete="SET NULL"), nullable=True
     )
     environment: Mapped[str | None] = mapped_column(String(64), nullable=True)
     api_key_id: Mapped[uuid.UUID | None] = mapped_column(

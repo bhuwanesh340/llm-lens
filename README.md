@@ -99,10 +99,10 @@ Sign in with your `ADMIN_EMAIL` and the plaintext password you hashed above.
 | --------------------- | ------------------------------------------------------------ |
 | `/`                   | Overview: totals, cost trend, error rate, active models      |
 | `/usage`              | Token usage by model / provider                              |
-| `/costs`              | Cost breakdown by model / provider / application             |
+| `/costs`              | Cost breakdown by model / provider / project                 |
 | `/models`             | Per-model latency (avg, P95), error rate, cost               |
 | `/requests`           | Paginated request explorer + detail view                     |
-| `/applications`       | Application CRUD + per-app attribution                       |
+| `/projects`           | Project CRUD + per-project attribution                       |
 | `/errors`             | Error counts/rates by provider, model, and category          |
 
 ---
@@ -195,17 +195,28 @@ curl.exe http://localhost:4000/v1/chat/completions `
   -d "@request.json"
 ```
 
-### Tag requests to an application
+### Tag traces to a project
 
-Add a `metadata.application` field to attribute cost per app (untagged requests group under **"unassigned"**):
+LLM Lens traces **any** codebase, not just this one. To attribute cost and usage to a
+project, add a `metadata.project` field with a human-readable name — no internal IDs, and
+no prior setup required:
 
 ```json
 {
   "model": "gemma3:1b",
   "messages": [{ "role": "user", "content": "Say hi" }],
-  "metadata": { "application": "demo-app" }
+  "metadata": { "project": "demo-app" }
 }
 ```
+
+- A project that does not exist yet is **created automatically** on its first trace
+  (the same behaviour as LangSmith), and is flagged as auto-created in the UI.
+- Names are matched case- and whitespace-insensitively, so `Demo App`, `demo app`, and
+  `demo-app` all resolve to the same project.
+- Traces with no `project` field are grouped under **"unassigned"**.
+
+You can also pre-create projects on the `/projects` page to set a description and
+environment up front.
 
 ### Python
 
@@ -237,15 +248,15 @@ All routes are prefixed `/api/v1`. Every route except `/health*` requires an aut
 | `POST /api/v1/auth/login` · `/auth/logout` · `GET /auth/session`      | Cookie-based admin auth            |
 | `GET  /api/v1/overview`                                              | Dashboard summary metrics          |
 | `GET  /api/v1/usage` · `/timeseries` · `/by-model` · `/by-provider`   | Token usage analytics              |
-| `GET  /api/v1/costs` · `/timeseries` · `/by-model` · `/by-provider` · `/by-application` | Cost analytics   |
+| `GET  /api/v1/costs` · `/timeseries` · `/by-model` · `/by-provider` · `/by-project` | Cost analytics   |
 | `GET  /api/v1/models` · `/models/{model_id}`                          | Per-model performance              |
 | `GET  /api/v1/requests` · `/requests/{request_id}`                    | Request explorer (paginated)       |
-| `GET/POST/PATCH/DELETE /api/v1/applications`                          | Application CRUD                   |
+| `GET/POST/PATCH/DELETE /api/v1/projects`                              | Project CRUD                       |
 | `GET  /api/v1/errors` · `/by-provider` · `/by-model` · `/by-code`     | Error analytics                    |
 | `POST /api/v1/telemetry/events`                                      | Gateway ingestion (service-to-service) |
 | `GET  /metrics`                                                      | Prometheus metrics                 |
 
-All analytics endpoints accept `from`, `to`, `provider`, `model`, `application_id`, and `environment` query filters.
+All analytics endpoints accept `from`, `to`, `provider`, `model`, `project_id`, and `environment` query filters.
 
 ### Calling the API directly
 

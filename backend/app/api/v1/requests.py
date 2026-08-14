@@ -48,7 +48,7 @@ async def request_detail(
         completed_at=record.completed_at,
         provider=record.provider,
         model=record.model,
-        application_id=record.application_id,
+        project_id=record.project_id,
         environment=record.environment,
         status=record.status,
         input_tokens=record.input_tokens,

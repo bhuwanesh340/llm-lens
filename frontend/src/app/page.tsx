@@ -91,14 +91,28 @@ export default function DashboardPage() {
                   cost: point.total_cost ? Number(point.total_cost) : 0,
                 }))}
               >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" fontSize={12} />
-                <YAxis fontSize={12} />
-                <Tooltip />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                <XAxis
+                  dataKey="date"
+                  fontSize={12}
+                  stroke="var(--muted-foreground)"
+                  tickLine={false}
+                />
+                <YAxis fontSize={12} stroke="var(--muted-foreground)" tickLine={false} />
+                <Tooltip
+                  contentStyle={{
+                    background: "var(--popover)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "var(--radius-md)",
+                    color: "var(--popover-foreground)",
+                  }}
+                  labelStyle={{ color: "var(--muted-foreground)" }}
+                  cursor={{ stroke: "var(--border)" }}
+                />
                 <Line
                   type="monotone"
                   dataKey="cost"
-                  stroke="var(--chart-1, #6366f1)"
+                  stroke="var(--chart-1)"
                   strokeWidth={2}
                   dot={false}
                 />

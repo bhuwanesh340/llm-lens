@@ -1,6 +1,6 @@
 /**
  * TypeScript types mirroring the backend Pydantic response schemas
- * (backend/app/schemas/analytics.py, requests.py, applications.py, common.py).
+ * (backend/app/schemas/analytics.py, requests.py, projects.py, common.py).
  */
 
 export interface PageMeta {
@@ -108,7 +108,7 @@ export interface RequestListItem {
   created_at: string;
   provider: string;
   model: string;
-  application_id: string | null;
+  project_id: string | null;
   environment: string | null;
   status: string;
   input_tokens: number;
@@ -130,24 +130,26 @@ export interface RequestDetail extends RequestListItem {
   metadata: Record<string, unknown>;
 }
 
-export interface ApplicationResponse {
+export interface ProjectResponse {
   id: string;
   name: string;
   slug: string;
   description: string | null;
   environment: string | null;
+  auto_created: boolean;
   created_at: string;
   updated_at: string;
 }
 
-export interface ApplicationCreateInput {
+export interface ProjectCreateInput {
   name: string;
-  slug: string;
+  /** Derived from `name` server-side when omitted. */
+  slug?: string;
   description?: string | null;
   environment?: string | null;
 }
 
-export interface ApplicationUpdateInput {
+export interface ProjectUpdateInput {
   name?: string;
   description?: string | null;
   environment?: string | null;
@@ -164,7 +166,7 @@ export interface RangeFilters {
   to?: string;
   provider?: string;
   model?: string;
-  application_id?: string;
+  project_id?: string;
   environment?: string;
 }
 

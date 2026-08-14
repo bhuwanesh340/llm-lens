@@ -29,9 +29,9 @@ export default function CostsPage() {
     queryKey: ["costs-by-provider", filters],
     queryFn: () => costsApi.byProvider(filters),
   });
-  const byApplicationQuery = useQuery({
-    queryKey: ["costs-by-application", filters],
-    queryFn: () => costsApi.byApplication(filters),
+  const byProjectQuery = useQuery({
+    queryKey: ["costs-by-project", filters],
+    queryFn: () => costsApi.byProject(filters),
   });
 
   return (
@@ -39,7 +39,7 @@ export default function CostsPage() {
       <div>
         <h1 className="text-2xl font-semibold">Costs</h1>
         <p className="text-muted-foreground">
-          Spend broken down by model, provider, and application. Requests with unknown pricing are
+          Spend broken down by model, provider, and project. Requests with unknown pricing are
           tracked separately and excluded from totals.
         </p>
       </div>
@@ -52,7 +52,7 @@ export default function CostsPage() {
             <TabsList>
               <TabsTrigger value="by-model">By model</TabsTrigger>
               <TabsTrigger value="by-provider">By provider</TabsTrigger>
-              <TabsTrigger value="by-application">By application</TabsTrigger>
+              <TabsTrigger value="by-project">By project</TabsTrigger>
             </TabsList>
             <TabsContent value="by-model">
               <CostBreakdownTable rows={byModelQuery.data} isLoading={byModelQuery.isLoading} />
@@ -63,10 +63,10 @@ export default function CostsPage() {
                 isLoading={byProviderQuery.isLoading}
               />
             </TabsContent>
-            <TabsContent value="by-application">
+            <TabsContent value="by-project">
               <CostBreakdownTable
-                rows={byApplicationQuery.data}
-                isLoading={byApplicationQuery.isLoading}
+                rows={byProjectQuery.data}
+                isLoading={byProjectQuery.isLoading}
               />
             </TabsContent>
           </Tabs>

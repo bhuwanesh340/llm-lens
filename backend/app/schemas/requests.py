@@ -17,7 +17,7 @@ class RequestListItem(BaseModel):
     created_at: datetime
     provider: str
     model: str
-    application_id: UUID | None
+    project_id: UUID | None
     environment: str | None
     status: str
     input_tokens: int

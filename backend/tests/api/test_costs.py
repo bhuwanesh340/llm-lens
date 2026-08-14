@@ -7,7 +7,7 @@ from decimal import Decimal
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
-from tests.api.conftest import make_application, make_request
+from tests.api.conftest import make_project, make_request
 from tests.integration.conftest import requires_postgres
 
 pytestmark = requires_postgres
@@ -39,19 +39,19 @@ def test_costs_by_provider(api_client: TestClient, pg_session: Session) -> None:
     assert keys == {"openai", "anthropic"}
 
 
-def test_costs_by_application_includes_unassigned_bucket(
+def test_costs_by_project_includes_unassigned_bucket(
     api_client: TestClient, pg_session: Session
 ) -> None:
-    application = make_application(pg_session)
-    make_request(pg_session, application_id=application.id, total_cost=Decimal("0.00010000"))
-    make_request(pg_session, application_id=None, total_cost=Decimal("0.00020000"))
+    project = make_project(pg_session)
+    make_request(pg_session, project_id=project.id, total_cost=Decimal("0.00010000"))
+    make_request(pg_session, project_id=None, total_cost=Decimal("0.00020000"))
 
-    response = api_client.get("/api/v1/costs/by-application")
+    response = api_client.get("/api/v1/costs/by-project")
 
     assert response.status_code == 200
     keys = {row["key"] for row in response.json()}
     assert "unassigned" in keys
-    assert str(application.id) in keys
+    assert str(project.id) in keys
 
 
 def test_costs_timeseries(api_client: TestClient, pg_session: Session) -> None:

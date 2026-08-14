@@ -9,8 +9,8 @@ from app.api.deps import AdminSession, RangeFilterDep
 from app.db.session import get_db
 from app.schemas.analytics import CostBreakdownItem, CostTimeseriesItem
 from app.services.analytics_service import (
-    get_costs_by_application,
     get_costs_by_model,
+    get_costs_by_project,
     get_costs_by_provider,
     get_costs_timeseries,
 )
@@ -46,8 +46,8 @@ async def costs_by_provider(
     return [CostBreakdownItem.model_validate(row) for row in get_costs_by_provider(db, filters)]
 
 
-@router.get("/by-application", response_model=list[CostBreakdownItem])
-async def costs_by_application(
+@router.get("/by-project", response_model=list[CostBreakdownItem])
+async def costs_by_project(
     _: AdminSession, filters: RangeFilterDep, db: Session = Depends(get_db)
 ) -> list[CostBreakdownItem]:
-    return [CostBreakdownItem.model_validate(row) for row in get_costs_by_application(db, filters)]
+    return [CostBreakdownItem.model_validate(row) for row in get_costs_by_project(db, filters)]

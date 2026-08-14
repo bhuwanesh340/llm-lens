@@ -1,1 +1,1 @@
-"""Business logic services (analytics, cost, usage, applications)."""
+"""Business logic services (analytics, cost, usage, projects)."""

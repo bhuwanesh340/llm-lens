@@ -12,6 +12,8 @@ Consumes a normalized+redacted telemetry event and persists it as an
 
 from __future__ import annotations
 
+import uuid
+
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -21,6 +23,10 @@ from app.core.metrics import telemetry_events_failed_total, telemetry_events_tot
 from app.db.models.request import LLMRequest
 from app.providers.registry import is_model_configured
 from app.services.cost_service import calculate_cost
+from app.services.project_service import (
+    InvalidProjectNameError,
+    resolve_or_create_project,
+)
 from app.telemetry.events import NormalizedTelemetryEvent, RawTelemetryEvent
 from app.telemetry.normalizer import normalize_event
 from app.telemetry.redaction import apply_redaction
@@ -49,7 +55,32 @@ class UnconfiguredModelError(Exception):
         self.model = model
 
 
-def _to_orm(event: NormalizedTelemetryEvent, db: Session) -> LLMRequest:
+def _resolve_project_id(db: Session, event: NormalizedTelemetryEvent) -> uuid.UUID | None:
+    """Resolve the owning project, auto-creating it for unseen names (FR-102).
+
+    An explicit `project_id` (set by an authenticated project API key) wins
+    over a `project` name supplied in request metadata (FR-119). An invalid
+    name is recorded as unassigned rather than dropping the trace (FR-104).
+    """
+
+    if event.project_id:
+        try:
+            return uuid.UUID(event.project_id)
+        except ValueError:
+            logger.warning("telemetry_invalid_project_id", request_id=event.request_id)
+
+    if event.project:
+        try:
+            return resolve_or_create_project(db, event.project).id
+        except InvalidProjectNameError:
+            logger.warning("telemetry_invalid_project_name", request_id=event.request_id)
+
+    return None
+
+
+def _to_orm(
+    event: NormalizedTelemetryEvent, db: Session, project_id: uuid.UUID | None
+) -> LLMRequest:
     cost = calculate_cost(
         db,
         provider=event.provider,
@@ -72,7 +103,7 @@ def _to_orm(event: NormalizedTelemetryEvent, db: Session) -> LLMRequest:
         total_cost=cost.total_cost,
         latency_ms=event.latency_ms,
         ttft_ms=event.ttft_ms,
-        application_id=event.application_id,
+        project_id=project_id,
         environment=event.environment,
         api_key_id=event.api_key_id,
         error_type=event.error_type,
@@ -108,7 +139,7 @@ def collect_telemetry_event(
     normalized = normalize_event(raw)
     redacted = apply_redaction(normalized, settings)
 
-    orm_request = _to_orm(redacted, db)
+    orm_request = _to_orm(redacted, db, _resolve_project_id(db, redacted))
     db.add(orm_request)
     try:
         db.commit()

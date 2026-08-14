@@ -5,15 +5,15 @@ Importing this package registers all models on the shared declarative
 """
 
 from app.db.models.api_key import ApiKey
-from app.db.models.application import Application
 from app.db.models.model import Model
+from app.db.models.project import Project
 from app.db.models.provider import Provider
 from app.db.models.request import LLMRequest
 
 __all__ = [
     "ApiKey",
-    "Application",
     "Model",
+    "Project",
     "Provider",
     "LLMRequest",
 ]

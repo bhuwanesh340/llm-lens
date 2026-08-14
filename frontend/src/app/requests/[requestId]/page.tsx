@@ -52,7 +52,7 @@ export default function RequestDetailPage({ params }: { params: Promise<{ reques
               <Field label="Provider" value={detail.provider} />
               <Field label="Model" value={detail.model} />
               <Field label="Environment" value={detail.environment ?? "—"} />
-              <Field label="Application" value={detail.application_id ?? "unassigned"} />
+              <Field label="Project" value={detail.project_id ?? "unassigned"} />
               <Field label="Created" value={formatDateTime(detail.created_at)} />
               <Field label="Completed" value={formatDateTime(detail.completed_at)} />
               <Field label="Latency" value={formatLatency(detail.latency_ms)} />

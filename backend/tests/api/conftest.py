@@ -19,14 +19,14 @@ from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
 from app.core.security import require_admin_session
-from app.db.models.application import Application
+from app.db.models.project import Project
 from app.db.models.provider import Provider
 from app.db.models.request import LLMRequest
 from app.db.session import get_db
 from app.main import app
 from tests.integration.conftest import pg_session, requires_postgres  # noqa: F401
 
-__all__ = ["requires_postgres", "pg_session", "api_client", "make_request", "make_application"]
+__all__ = ["requires_postgres", "pg_session", "api_client", "make_request", "make_project"]
 
 
 @pytest.fixture()
@@ -39,12 +39,12 @@ def api_client(pg_session: Session) -> Generator[TestClient, None, None]:
         app.dependency_overrides.clear()
 
 
-def make_application(db: Session, *, name: str = "Test App", slug: str = "test-app") -> Application:
-    application = Application(name=name, slug=slug)
-    db.add(application)
+def make_project(db: Session, *, name: str = "Test App", slug: str = "test-app") -> Project:
+    project = Project(name=name, slug=slug)
+    db.add(project)
     db.commit()
-    db.refresh(application)
-    return application
+    db.refresh(project)
+    return project
 
 
 def make_request(
@@ -60,7 +60,7 @@ def make_request(
     input_cost: Decimal | None = Decimal("0.00005000"),
     output_cost: Decimal | None = Decimal("0.00005000"),
     latency_ms: int = 250,
-    application_id: uuid.UUID | None = None,
+    project_id: uuid.UUID | None = None,
     environment: str | None = None,
     error_type: str | None = None,
     error_code: str | None = None,
@@ -85,7 +85,7 @@ def make_request(
         output_cost=output_cost,
         total_cost=total_cost,
         latency_ms=latency_ms,
-        application_id=application_id,
+        project_id=project_id,
         environment=environment,
         error_type=error_type,
         error_code=error_code,

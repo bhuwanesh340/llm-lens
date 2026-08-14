@@ -3,9 +3,10 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { applicationsApi, ApiError } from "@/lib/api";
+import { projectsApi, ApiError } from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -26,53 +27,56 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { ApplicationResponse } from "@/lib/types";
+import type { ProjectResponse } from "@/lib/types";
 
-export default function ApplicationsPage() {
+const TAG_SNIPPET = `{
+  "model": "gpt-4o-mini",
+  "messages": [{ "role": "user", "content": "Hello" }],
+  "metadata": { "project": "my-project" }
+}`;
+
+export default function ProjectsPage() {
   const queryClient = useQueryClient();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [name, setName] = useState("");
-  const [slug, setSlug] = useState("");
   const [description, setDescription] = useState("");
   const [environment, setEnvironment] = useState("");
   const [formError, setFormError] = useState<string | null>(null);
 
-  const applicationsQuery = useQuery({
-    queryKey: ["applications"],
-    queryFn: () => applicationsApi.list(),
+  const projectsQuery = useQuery({
+    queryKey: ["projects"],
+    queryFn: () => projectsApi.list(),
   });
 
   const createMutation = useMutation({
     mutationFn: () =>
-      applicationsApi.create({
+      projectsApi.create({
         name,
-        slug,
         description: description || null,
         environment: environment || null,
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["applications"] });
-      toast.success("Application created");
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      toast.success("Project created");
       setDialogOpen(false);
       setName("");
-      setSlug("");
       setDescription("");
       setEnvironment("");
       setFormError(null);
     },
     onError: (err) => {
-      setFormError(err instanceof ApiError ? err.message : "Failed to create application");
+      setFormError(err instanceof ApiError ? err.message : "Failed to create project");
     },
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: string) => applicationsApi.delete(id),
+    mutationFn: (id: string) => projectsApi.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["applications"] });
-      toast.success("Application deleted");
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      toast.success("Project deleted");
     },
     onError: (err) => {
-      toast.error(err instanceof ApiError ? err.message : "Failed to delete application");
+      toast.error(err instanceof ApiError ? err.message : "Failed to delete project");
     },
   });
 
@@ -80,18 +84,18 @@ export default function ApplicationsPage() {
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">Applications</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Projects</h1>
           <p className="text-muted-foreground">
-            Tag requests to applications to filter usage/cost/error views per app.
+            Attribute traces to a project to see cost and usage per project.
           </p>
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger render={<Button>New application</Button>} />
+          <DialogTrigger render={<Button>New project</Button>} />
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Create application</DialogTitle>
+              <DialogTitle>Create project</DialogTitle>
               <DialogDescription>
-                The slug is used as the stable identifier when tagging requests.
+                Only a name is required — the identifier is derived from it automatically.
               </DialogDescription>
             </DialogHeader>
             <form
@@ -102,37 +106,27 @@ export default function ApplicationsPage() {
               }}
             >
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="app-name">Name</Label>
+                <Label htmlFor="project-name">Name</Label>
                 <Input
-                  id="app-name"
+                  id="project-name"
                   required
+                  placeholder="Support Bot"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="app-slug">Slug</Label>
+                <Label htmlFor="project-description">Description</Label>
                 <Input
-                  id="app-slug"
-                  required
-                  pattern="^[a-z0-9][a-z0-9-]*$"
-                  placeholder="support-bot"
-                  value={slug}
-                  onChange={(e) => setSlug(e.target.value)}
-                />
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="app-description">Description</Label>
-                <Input
-                  id="app-description"
+                  id="project-description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="app-environment">Environment</Label>
+                <Label htmlFor="project-environment">Environment</Label>
                 <Input
-                  id="app-environment"
+                  id="project-environment"
                   placeholder="production"
                   value={environment}
                   onChange={(e) => setEnvironment(e.target.value)}
@@ -151,41 +145,64 @@ export default function ApplicationsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>All applications</CardTitle>
+          <CardTitle>Tag a trace</CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-3">
+          <p className="text-muted-foreground text-sm">
+            Add a <code className="text-primary">project</code> field to your request metadata. A
+            project that does not exist yet is created automatically on its first trace.
+          </p>
+          <pre className="bg-muted/50 border-border overflow-x-auto rounded-md border p-4 text-xs">
+            {TAG_SNIPPET}
+          </pre>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>All projects</CardTitle>
         </CardHeader>
         <CardContent>
-          {applicationsQuery.isLoading ? (
+          {projectsQuery.isLoading ? (
             <Skeleton className="h-48 w-full" />
-          ) : !applicationsQuery.data || applicationsQuery.data.length === 0 ? (
+          ) : !projectsQuery.data || projectsQuery.data.length === 0 ? (
             <p className="text-muted-foreground py-8 text-center text-sm">
-              No applications yet. Create one to start tagging requests.
+              No projects yet. Create one, or just send a trace tagged with a project name.
             </p>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Name</TableHead>
-                  <TableHead>Slug</TableHead>
+                  <TableHead>Identifier</TableHead>
+                  <TableHead>Origin</TableHead>
                   <TableHead>Environment</TableHead>
                   <TableHead>Description</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {applicationsQuery.data.map((app: ApplicationResponse) => (
-                  <TableRow key={app.id}>
-                    <TableCell className="font-medium">{app.name}</TableCell>
-                    <TableCell>{app.slug}</TableCell>
-                    <TableCell>{app.environment ?? "—"}</TableCell>
-                    <TableCell className="max-w-xs truncate">{app.description ?? "—"}</TableCell>
+                {projectsQuery.data.map((project: ProjectResponse) => (
+                  <TableRow key={project.id}>
+                    <TableCell className="font-medium">{project.name}</TableCell>
+                    <TableCell className="font-mono text-xs">{project.slug}</TableCell>
+                    <TableCell>
+                      <Badge variant={project.auto_created ? "secondary" : "outline"}>
+                        {project.auto_created ? "Auto-created" : "Manual"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>{project.environment ?? "—"}</TableCell>
+                    <TableCell className="max-w-xs truncate">
+                      {project.description ?? "—"}
+                    </TableCell>
                     <TableCell className="text-right">
                       <Button
                         variant="outline"
                         size="sm"
                         disabled={deleteMutation.isPending}
                         onClick={() => {
-                          if (confirm(`Delete application "${app.name}"?`)) {
-                            deleteMutation.mutate(app.id);
+                          if (confirm(`Delete project "${project.name}"?`)) {
+                            deleteMutation.mutate(project.id);
                           }
                         }}
                       >

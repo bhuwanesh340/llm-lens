@@ -45,7 +45,11 @@ class RawTelemetryEvent(BaseModel):
     latency_ms: int | None = None
     ttft_ms: int | None = None
 
-    application_id: str | None = None
+    # Human-readable project tag (FR-101). Resolved (and auto-created) during
+    # ingestion. `project_id` is set by an authenticated project API key and
+    # takes precedence over `project` (FR-119).
+    project: str | None = None
+    project_id: str | None = None
     environment: str | None = None
     api_key_id: str | None = None
 
@@ -79,7 +83,8 @@ class NormalizedTelemetryEvent(BaseModel):
     latency_ms: int
     ttft_ms: int | None
 
-    application_id: str | None
+    project: str | None
+    project_id: str | None
     environment: str | None
     api_key_id: str | None
 

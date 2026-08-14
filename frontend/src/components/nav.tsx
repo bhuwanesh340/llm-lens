@@ -14,7 +14,7 @@ const LINKS = [
   { href: "/costs", label: "Costs" },
   { href: "/models", label: "Models" },
   { href: "/requests", label: "Requests" },
-  { href: "/applications", label: "Applications" },
+  { href: "/projects", label: "Projects" },
   { href: "/errors", label: "Errors" },
 ];
 
@@ -34,20 +34,27 @@ export function Nav() {
   }
 
   return (
-    <header className="bg-card border-b">
+    <header className="bg-card/70 border-border sticky top-0 z-50 border-b backdrop-blur-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-3">
         <div className="flex items-center gap-6">
-          <span className="text-lg font-semibold">LLM Lens</span>
+          <span className="flex items-center gap-2 text-lg font-semibold tracking-tight">
+            <span
+              aria-hidden
+              className="from-primary to-accent size-5 rounded-md bg-gradient-to-br"
+            />
+            LLM Lens
+          </span>
           <nav className="flex items-center gap-1">
             {LINKS.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
+                aria-current={pathname === link.href ? "page" : undefined}
                 className={cn(
-                  "hover:bg-accent hover:text-accent-foreground rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+                  "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
                   pathname === link.href
-                    ? "bg-accent text-accent-foreground"
-                    : "text-muted-foreground",
+                    ? "bg-primary/10 text-primary"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground",
                 )}
               >
                 {link.label}
