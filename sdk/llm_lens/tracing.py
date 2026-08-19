@@ -13,7 +13,7 @@ import threading
 import uuid
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from typing import Any, TypeVar, cast
 
 from llm_lens.config import is_configured
@@ -45,7 +45,7 @@ class _SpanRecord:
     name: str
     kind: str
     status: str = "running"
-    started_at: datetime = field(default_factory=lambda: datetime.now(UTC))
+    started_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     ended_at: datetime | None = None
     provider: str | None = None
     model: str | None = None
@@ -83,7 +83,7 @@ class TraceBuilder:
         self.id = trace_id
         self.name = name
         self.status = "running"
-        self.started_at = datetime.now(UTC)
+        self.started_at = datetime.now(timezone.utc)
         self.ended_at: datetime | None = None
         self.environment = environment
         self.metadata: dict[str, object] = {}
@@ -100,7 +100,7 @@ class TraceBuilder:
             record = self.spans.get(span_id)
             if record is None:
                 return
-            record.ended_at = datetime.now(UTC)
+            record.ended_at = datetime.now(timezone.utc)
             record.status = status
             if error is not None:
                 record.error_type = type(error).__name__
@@ -138,7 +138,7 @@ class TraceBuilder:
 
     def finish(self, status: str) -> None:
         self.status = status
-        self.ended_at = datetime.now(UTC)
+        self.ended_at = datetime.now(timezone.utc)
 
     def to_payload(self) -> dict[str, object]:
         with self._lock:

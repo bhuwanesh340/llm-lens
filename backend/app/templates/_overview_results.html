@@ -5,7 +5,7 @@
   </div>
   <div class="stat-card">
     <div class="stat-label">Total cost</div>
-    <div class="stat-value">{{ "$%.4f"|format(overview.total_cost) if overview.total_cost else "$0.0000" }}</div>
+    <div class="stat-value">{{ "$%.6f"|format(overview.total_cost) if overview.total_cost is not none else "$0.000000" }}</div>
     {% if overview.unknown_cost_count %}<div class="stat-hint">{{ overview.unknown_cost_count }} unknown</div>{% endif %}
   </div>
   <div class="stat-card">
@@ -14,7 +14,7 @@
   </div>
   <div class="stat-card">
     <div class="stat-label">Avg latency</div>
-    <div class="stat-value">{{ overview.avg_latency_ms | round | int if overview.avg_latency_ms else "—" }}{% if overview.avg_latency_ms %} ms{% endif %}</div>
+    <div class="stat-value">{{ overview.avg_latency_ms | round | int if overview.avg_latency_ms is not none else "—" }}{% if overview.avg_latency_ms is not none %} ms{% endif %}</div>
   </div>
   <div class="stat-card">
     <div class="stat-label">Error rate</div>
@@ -34,7 +34,7 @@
     <div class="bar-chart">
       {% for point in timeseries %}
         <div class="bar-chart-col">
-          <div class="bar-chart-bar" style="height: {{ ((point.total_cost | float) / max_cost * 100) if point.total_cost else 1 }}%;" title="{{ point.date.strftime('%Y-%m-%d') }}: {{ "$%.4f"|format(point.total_cost) if point.total_cost else "$0.0000" }}"></div>
+          <div class="bar-chart-bar" style="height: {{ ((point.total_cost | float) / max_cost * 100) if point.total_cost else 1 }}%;" title="{{ point.date.strftime('%Y-%m-%d') }}: {{ "$%.6f"|format(point.total_cost) if point.total_cost is not none else "$0.000000" }}"></div>
           <div class="bar-chart-label">{{ point.date.strftime('%m/%d') }}</div>
         </div>
       {% endfor %}

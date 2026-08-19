@@ -15,13 +15,13 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from llm_lens.tracing import TraceBuilder
 
-_current_trace: ContextVar["TraceBuilder | None"] = ContextVar(
+_current_trace: ContextVar[TraceBuilder | None] = ContextVar(
     "llm_lens_current_trace", default=None
 )
 _current_span_id: ContextVar[str | None] = ContextVar("llm_lens_current_span_id", default=None)
 
 
-def get_current_trace() -> "TraceBuilder | None":
+def get_current_trace() -> TraceBuilder | None:
     return _current_trace.get()
 
 
@@ -29,11 +29,11 @@ def get_current_span_id() -> str | None:
     return _current_span_id.get()
 
 
-def set_current_trace(builder: "TraceBuilder | None") -> Token["TraceBuilder | None"]:
+def set_current_trace(builder: TraceBuilder | None) -> Token[TraceBuilder | None]:
     return _current_trace.set(builder)
 
 
-def reset_current_trace(token: Token["TraceBuilder | None"]) -> None:
+def reset_current_trace(token: Token[TraceBuilder | None]) -> None:
     _current_trace.reset(token)
 
 

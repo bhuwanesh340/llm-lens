@@ -24,7 +24,7 @@
           <td>{{ item.model }}</td>
           <td>{{ item.environment or "—" }}</td>
           <td>{{ "{:,}".format(item.total_tokens) }}</td>
-          <td>{{ "$%.6f"|format(item.total_cost) if item.total_cost else "—" }}</td>
+          <td>{{ "$%.6f"|format(item.total_cost) if item.total_cost is not none else "—" }}</td>
           <td>{{ item.latency_ms }} ms</td>
           <td><span class="badge badge-{{ item.status }}">{{ item.status }}</span></td>
         </tr>

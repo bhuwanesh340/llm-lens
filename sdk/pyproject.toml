@@ -39,6 +39,10 @@ python_version = "3.9"
 disallow_untyped_defs = true
 warn_unused_ignores = true
 
+[[tool.mypy.overrides]]
+module = "anyio.*"
+follow_imports = "skip"
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 asyncio_mode = "auto"

@@ -16,20 +16,20 @@
     </div>
     <div class="stat-card">
       <div class="stat-label">Total cost</div>
-      <div class="stat-value">{{ "$%.4f"|format(row.total_cost) if row.total_cost else "$0.0000" }}</div>
+      <div class="stat-value">{{ "$%.6f"|format(row.total_cost) if row.total_cost is not none else "$0.000000" }}</div>
       {% if row.unknown_cost_count %}<div class="stat-hint">{{ row.unknown_cost_count }} unknown</div>{% endif %}
     </div>
     <div class="stat-card">
       <div class="stat-label">Avg cost / request</div>
-      <div class="stat-value">{{ "$%.4f"|format(row.avg_cost_per_request) if row.avg_cost_per_request else "—" }}</div>
+      <div class="stat-value">{{ "$%.6f"|format(row.avg_cost_per_request) if row.avg_cost_per_request is not none else "—" }}</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Avg latency</div>
-      <div class="stat-value">{{ row.avg_latency_ms | round | int if row.avg_latency_ms else "—" }}{% if row.avg_latency_ms %} ms{% endif %}</div>
+      <div class="stat-value">{{ row.avg_latency_ms | round | int if row.avg_latency_ms is not none else "—" }}{% if row.avg_latency_ms is not none %} ms{% endif %}</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">P95 latency</div>
-      <div class="stat-value">{{ row.p95_latency_ms | round | int if row.p95_latency_ms else "—" }}{% if row.p95_latency_ms %} ms{% endif %}</div>
+      <div class="stat-value">{{ row.p95_latency_ms | round | int if row.p95_latency_ms is not none else "—" }}{% if row.p95_latency_ms is not none %} ms{% endif %}</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Error rate</div>

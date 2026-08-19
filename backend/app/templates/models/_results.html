@@ -21,9 +21,9 @@
           <td>{{ row.provider }}</td>
           <td>{{ row.request_count }}</td>
           <td>{{ "{:,}".format(row.total_tokens) }}</td>
-          <td>{{ "$%.4f"|format(row.total_cost) if row.total_cost else "$0.0000" }}</td>
-          <td>{{ row.avg_latency_ms | round | int if row.avg_latency_ms else "—" }}{% if row.avg_latency_ms %} ms{% endif %}</td>
-          <td>{{ row.p95_latency_ms | round | int if row.p95_latency_ms else "—" }}{% if row.p95_latency_ms %} ms{% endif %}</td>
+          <td>{{ "$%.6f"|format(row.total_cost) if row.total_cost is not none else "$0.000000" }}</td>
+          <td>{{ row.avg_latency_ms | round | int if row.avg_latency_ms is not none else "—" }}{% if row.avg_latency_ms is not none %} ms{% endif %}</td>
+          <td>{{ row.p95_latency_ms | round | int if row.p95_latency_ms is not none else "—" }}{% if row.p95_latency_ms is not none %} ms{% endif %}</td>
           <td>{{ "%.1f"|format(row.error_rate * 100) }}%</td>
         </tr>
       {% endfor %}

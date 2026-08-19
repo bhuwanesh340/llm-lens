@@ -24,13 +24,13 @@
     </div>
     <div class="stat-card">
       <div class="stat-label">Cost</div>
-      <div class="stat-value">{{ "$%.6f"|format(item.total_cost) if item.total_cost else "—" }}</div>
+      <div class="stat-value">{{ "$%.6f"|format(item.total_cost) if item.total_cost is not none else "—" }}</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Latency</div>
       <div class="stat-value">{{ item.latency_ms }} ms</div>
     </div>
-    {% if item.ttft_ms %}
+    {% if item.ttft_ms is not none %}
     <div class="stat-card">
       <div class="stat-label">TTFT</div>
       <div class="stat-value">{{ item.ttft_ms }} ms</div>

@@ -23,7 +23,7 @@ _INGEST_PATH = "/api/v1/traces/ingest"
 
 
 class _Sender:
-    def __init__(self, config: "ClientConfig") -> None:
+    def __init__(self, config: ClientConfig) -> None:
         self._config = config
         self._queue: queue.Queue[dict[str, Any]] = queue.Queue(maxsize=config.max_queue_size)
         self._stop = threading.Event()
@@ -71,11 +71,11 @@ class _Sender:
             self._client.close()
 
 
-_sender: "_Sender | None" = None
+_sender: _Sender | None = None
 _lock = threading.Lock()
 
 
-def restart_sender(config: "ClientConfig") -> None:
+def restart_sender(config: ClientConfig) -> None:
     """(Re)start the background sender for a new `configure()` call."""
 
     global _sender

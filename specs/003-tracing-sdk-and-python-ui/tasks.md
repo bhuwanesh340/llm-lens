@@ -83,6 +83,10 @@
 
 **Checkpoint**: A real SDK-instrumented script's trace is visible and correctly nested in the browser.
 
+**Verification pass (post Phase 1-3 implementation)**: `backend/` — `ruff check .` clean, `mypy app` clean, `pytest -q` → 35 passed / 52 skipped (Postgres-dependent tests skip cleanly without Docker). `sdk/` — `ruff check .` clean, `mypy llm_lens` clean, `pytest -q` → 14 passed. Fixed along the way: missing `pytestmark = requires_postgres` on `test_traces_ingest.py`/`test_traces_ui.py` (was causing a real-connection hang instead of a clean skip), added a `connect_timeout=2` safety net to the `pg_session` fixture, `datetime.UTC` (3.11+ only) replaced with `timezone.utc` in `sdk/llm_lens/tracing.py` for true 3.9+ compatibility, added a `follow_imports = "skip"` mypy override for `anyio.*` (transitively pulled in by httpx/pytest-asyncio, uses 3.10+ match syntax that broke mypy's py3.9 target parse).
+
+**Live run against real Postgres (Docker) surfaced two more real bugs, both fixed**: (1) `resolve_trace_ingest_project()` in `deps.py` required a Bearer token, but the SDK's documented zero-config quickstart (`configure(project=...)`, no `api_key`) sends no `Authorization` header at all — added a third auth path: no header + a `project` name in the payload still resolves/auto-creates by name (2 new backend tests lock this in). (2) `ingest_trace()` in `trace_service.py` hit a Postgres `ForeignKeyViolation` on `spans.trace_id` — `Trace`/`Span` have no ORM `relationship()` between them, so the unit of work had no dependency graph forcing trace-before-span insert order within one flush, and flushed the span batch first. Fixed with an explicit `db.flush()` right after `_upsert_trace()`, before any spans are added. Verified via a raw manual POST reproduction, then via `sdk/smoke_test.py` end-to-end (server log showed clean `201 Created` for both the success and error-path traces, no tracebacks).
+
 ---
 
 ## Phase 4: Port Remaining Analytics Views to Jinja (US4 - P3)
@@ -98,7 +102,7 @@
 - [ ] T236 [P] Port requests list/detail pages to backend/app/templates/requests/
 - [ ] T237 [P] Port projects page (create/list/delete + API key management UI) to backend/app/templates/projects.html (feature 002 T133)
 - [ ] T238 [P] Port errors page to backend/app/templates/errors.html
-- [ ] T239 Port login page to backend/app/templates/login.html, reusing existing session-cookie auth
+- [X] T239 Port login page to backend/app/templates/login.html, reusing existing session-cookie auth (done ahead of schedule in Phase 3, needed for page-auth testability — see backend/app/web/auth.py + templates/login.html)
 - [ ] T240 Shared filter-bar partial (date range, project, provider, model, environment) as an HTMX-swappable Jinja include, replacing frontend/src/components/filter-bar.tsx
 
 **Checkpoint**: SC-205 — every current React view has a working Python-rendered equivalent.
