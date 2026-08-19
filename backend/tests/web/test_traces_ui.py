@@ -13,7 +13,10 @@ from sqlalchemy.orm import Session
 
 from app.schemas.traces import TraceIngestPayload
 from app.services.trace_service import ingest_trace
+from tests.integration.conftest import requires_postgres
 from tests.web.conftest import make_project
+
+pytestmark = requires_postgres
 
 
 def _ingest(db: Session, project_id: object, **overrides: object) -> None:

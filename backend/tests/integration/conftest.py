@@ -41,7 +41,9 @@ requires_postgres = pytest.mark.skipif(
 
 @pytest.fixture()
 def pg_session() -> Generator[Session, None, None]:
-    engine = create_engine(TEST_DATABASE_URL, future=True)
+    engine = create_engine(
+        TEST_DATABASE_URL, future=True, connect_args={"connect_timeout": 2}
+    )
     Base.metadata.create_all(engine)
     session_factory = sessionmaker(bind=engine, future=True)
     session = session_factory()

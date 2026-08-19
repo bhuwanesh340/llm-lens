@@ -14,6 +14,9 @@ from sqlalchemy.orm import Session
 from app.core.config import get_settings
 from app.services.api_key_service import generate_api_key
 from tests.api.conftest import make_project
+from tests.integration.conftest import requires_postgres
+
+pytestmark = requires_postgres
 
 
 def _trace_payload(**overrides: object) -> dict[object, object]:
@@ -87,6 +90,33 @@ def test_ingest_with_shared_token_and_project_name_resolves_project(
     )
 
     assert response.status_code == 201
+
+
+def test_ingest_with_no_auth_header_and_project_name_resolves_project(
+    api_client: TestClient, pg_session: Session
+) -> None:
+    """SDK zero-config quickstart: `configure(project="My App")` with no
+    api_key and no shared token — the SDK sends no Authorization header at
+    all, and the payload's `project` name should still resolve/auto-create
+    (FR-214/FR-215/FR-217)."""
+
+    response = api_client.post(
+        "/api/v1/traces/ingest",
+        json=_trace_payload(id="trace_anon_named", project="Anon Named App"),
+    )
+
+    assert response.status_code == 201
+
+
+def test_ingest_with_no_auth_header_and_no_project_name_is_rejected(
+    api_client: TestClient,
+) -> None:
+    response = api_client.post(
+        "/api/v1/traces/ingest",
+        json=_trace_payload(id="trace_anon_unnamed"),
+    )
+
+    assert response.status_code == 401
 
 
 def test_ingest_with_revoked_key_is_rejected(

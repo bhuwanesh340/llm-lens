@@ -119,6 +119,11 @@ def ingest_trace(db: Session, project_id: uuid.UUID | None, payload: TraceIngest
 
     settings = get_settings()
     trace = _upsert_trace(db, project_id, payload)
+    # `Trace`/`Span` have no ORM `relationship()` between them, so the unit
+    # of work has no dependency graph telling it a span must be inserted
+    # after its trace — an explicit flush here guarantees the trace row
+    # exists before any span referencing it via the `trace_id` FK is added.
+    db.flush()
     for span_payload in payload.spans:
         _insert_span_if_absent(db, payload.id, span_payload, settings)
     db.commit()

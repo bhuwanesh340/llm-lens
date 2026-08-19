@@ -64,7 +64,7 @@
         <tbody>
           {% for node in detail.flat_ordered %}
             <tr>
-              <td>{{ "&nbsp;&nbsp;" * node.depth | safe }}{{ node.span.name }}</td>
+              <td>{{ ("&nbsp;&nbsp;" * node.depth) | safe }}{{ node.span.name }}</td>
               <td><span class="badge kind-{{ node.span.kind }}" style="color: var(--background);">{{ node.span.kind }}</span></td>
               <td><span class="badge badge-{{ node.span.status }}">{{ node.span.status }}</span></td>
               <td>{{ node.span.provider or "—" }}{% if node.span.model %} / {{ node.span.model }}{% endif %}</td>

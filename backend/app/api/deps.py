@@ -78,14 +78,34 @@ def get_pagination(
 def resolve_trace_ingest_project(
     request: Request, project_name: str | None, db: Session
 ) -> uuid.UUID | None:
-    """FR-214/FR-216/FR-217: authenticate an SDK ingest call either via a
-    project API key (`Authorization: Bearer <llk_...>`, precise attribution)
-    or, for the name-only SDK configuration path, the shared gateway token
-    (same `LITELLM_CALLBACK_TOKEN` feature 002's gateway path already uses)
-    plus a `project` name in the payload — auto-resolved/created identically
-    to gateway traces. Any other Bearer token is rejected as 401 (FR-218)."""
+    """FR-214/FR-216/FR-217: authenticate an SDK ingest call.
+
+    Three supported paths, in precedence order:
+    1. Project API key (`Authorization: Bearer llk_...`) — precise attribution.
+    2. Shared gateway token (same `LITELLM_CALLBACK_TOKEN` feature 002's
+       gateway path uses) + a `project` name in the payload — auto-resolved/
+       created identically to gateway traces.
+    3. No `Authorization` header at all + a `project` name in the payload —
+       the SDK's documented zero-config quickstart (`configure(project=...)`
+       with no key/token). Treated as anonymous-but-named, not "invalid", so
+       it is allowed rather than rejected; this matches the trust model of a
+       single-admin, self-hosted deployment.
+
+    Any *present* Bearer token that doesn't match one of the above is
+    rejected as 401 (FR-218), as is a request with neither a valid token nor
+    a project name to fall back on.
+    """
 
     auth_header = request.headers.get("Authorization", "")
+
+    if not auth_header:
+        if project_name:
+            try:
+                return resolve_or_create_project(db, project_name).id
+            except InvalidProjectNameError:
+                return None
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Missing API key")
+
     if not auth_header.startswith("Bearer "):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Missing API key")
     token = auth_header.removeprefix("Bearer ").strip()
@@ -101,6 +121,7 @@ def resolve_trace_ingest_project(
             return None
 
     raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid API key")
+
 
 
 PaginationDep = Annotated[PaginationParams, Depends(get_pagination)]
