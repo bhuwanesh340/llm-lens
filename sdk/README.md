@@ -8,7 +8,7 @@ dependencies pulled into your project (`httpx` only).
 ## Install
 
 ```bash
-pip install ./sdk   # or, once published: pip install llm-lens
+pip install ./sdk   # or, once published: pip install pyllmlens
 ```
 
 ## Quickstart

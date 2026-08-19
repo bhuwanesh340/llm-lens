@@ -1,7 +1,0 @@
-node_modules
-.next
-.git
-out
-Dockerfile
-npm-debug.log*
-pnpm-debug.log*

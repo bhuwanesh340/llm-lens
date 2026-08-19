@@ -1,8 +1,8 @@
 # LLM Lens
 
-Self-hosted LLM observability platform. Route every LLM call through a single gateway and get accurate cost, token, latency, and error analytics — without ever persisting prompt/response content by default.
+Self-hosted LLM observability platform. Route every LLM call through a single gateway (or instrument your own code directly with the `llm-lens` SDK) and get accurate cost, token, latency, and error analytics — without ever persisting prompt/response content by default.
 
-**Stack:** FastAPI + PostgreSQL + LiteLLM gateway + Next.js dashboard, all orchestrated with Docker Compose.
+**Stack:** FastAPI + PostgreSQL + a server-rendered (Jinja2 + HTMX) dashboard, all orchestrated with Docker Compose. LiteLLM is an optional gateway for routing raw provider calls; the `llm-lens` SDK is the no-gateway alternative for instrumenting existing Python code with `@trace()` decorators. No Node.js/frontend build is required.
 
 ---
 
@@ -10,30 +10,30 @@ Self-hosted LLM observability platform. Route every LLM call through a single ga
 
 ```
 Your app ──> LiteLLM gateway ──> Provider (OpenAI / Anthropic / Gemini / Ollama)
-              (port 4000)  │
-                           └── telemetry callback ──> Backend API ──> PostgreSQL
-                                                      (port 8000)     (port 5432)
-                                                            │
-                                                   Next.js dashboard
-                                                      (port 3000)
+         │    (port 4000, optional)  │
+         │                           └── telemetry callback ──> Backend API ──> PostgreSQL
+         │                                                     (port 8000)     (port 5432)
+         │                                                           │
+         └── llm-lens SDK (@trace decorators, no gateway) ───────────┤
+                                                              Dashboard UI
+                                                              (served by backend, port 8000)
 ```
 
-| Service    | Port | Purpose                                              |
-| ---------- | ---- | ---------------------------------------------------- |
-| `frontend` | 3000 | Next.js dashboard UI                                 |
-| `backend`  | 8000 | FastAPI analytics API + telemetry ingestion          |
-| `litellm`  | 4000 | Unified LLM gateway (the only place providers live)  |
-| `postgres` | 5432 | Request/telemetry storage                            |
+| Service    | Port | Purpose                                                        |
+| ---------- | ---- | --------------------------------------------------------------- |
+| `backend`  | 8000 | FastAPI analytics API + telemetry/trace ingestion + dashboard UI |
+| `litellm`  | 4000 | *(optional)* Unified LLM gateway — only needed if you route calls through it |
+| `postgres` | 5432 | Request/telemetry/trace storage                                 |
 
-The backend **never** calls provider SDKs directly — all provider config lives in [`litellm/config.yaml`](litellm/config.yaml).
+The backend **never** calls provider SDKs directly — all provider config for the optional gateway lives in [`litellm/config.yaml`](litellm/config.yaml).
 
 ---
 
 ## Prerequisites
 
 - **Docker Desktop** (Compose v2)
-- **Node.js 20+** and **pnpm 9** — only for local frontend development
 - **[uv](https://docs.astral.sh/uv/)** — only for local backend development
+- **Python 3.10+** and `pip install ./sdk` — only if instrumenting your own code with `@llm_lens.trace()`
 - *(Optional)* **[Ollama](https://ollama.com)** for zero-cost local model testing
 - *(Optional)* An API key for OpenAI / Anthropic / Gemini
 
@@ -74,24 +74,28 @@ uv run python -c "import bcrypt; print(bcrypt.hashpw(b'YourPasswordHere', bcrypt
 docker compose up --build -d
 ```
 
+This starts only `postgres` and `backend` — no Node, no build step. If you also want the optional LiteLLM gateway (for routing raw provider calls instead of/alongside SDK instrumentation):
+
+```powershell
+docker compose --profile litellm up --build -d
+```
+
 ### 3. Verify everything is healthy
 
 ```powershell
 docker compose ps
 ```
 
-All four containers should report `(healthy)`:
+Both containers should report `(healthy)`:
 
 ```
 llm-lens-postgres-1   Up (healthy)   0.0.0.0:5432->5432/tcp
 llm-lens-backend-1    Up (healthy)   0.0.0.0:8000->8000/tcp
-llm-lens-litellm-1    Up (healthy)   0.0.0.0:4000->4000/tcp
-llm-lens-frontend-1   Up (healthy)   0.0.0.0:3000->3000/tcp
 ```
 
 ### 4. Open the dashboard
 
-Navigate to **<http://localhost:3000>** — you'll be redirected to `/login`.
+Navigate to **<http://localhost:8000>** — you'll be redirected to `/login`.
 
 Sign in with your `ADMIN_EMAIL` and the plaintext password you hashed above.
 
@@ -102,8 +106,31 @@ Sign in with your `ADMIN_EMAIL` and the plaintext password you hashed above.
 | `/costs`              | Cost breakdown by model / provider / project                 |
 | `/models`             | Per-model latency (avg, P95), error rate, cost               |
 | `/requests`           | Paginated request explorer + detail view                     |
-| `/projects`           | Project CRUD + per-project attribution                       |
+| `/projects`           | Project CRUD + per-project API key management                |
 | `/errors`             | Error counts/rates by provider, model, and category          |
+| `/traces`             | Nested trace waterfall view (SDK-instrumented code only)     |
+
+---
+
+## Instrumenting your code with the SDK
+
+No gateway required — decorate any Python function to send nested traces straight to the backend:
+
+```powershell
+pip install ./sdk
+```
+
+```python
+import llm_lens
+
+llm_lens.configure(project="My App", base_url="http://localhost:8000")
+
+@llm_lens.trace()
+def answer_question(question: str) -> str:
+    ...
+```
+
+Nested `@llm_lens.trace()` calls are recorded as parent/child spans and rendered as a waterfall on the `/traces` page. If the backend is unreachable, instrumented code is unaffected — traces are dropped, not raised. See [`sdk/README.md`](sdk/README.md) for the full API.
 
 ---
 
@@ -232,7 +259,7 @@ resp = client.chat.completions.create(
 print(resp.choices[0].message.content)
 ```
 
-After any request, refresh <http://localhost:3000/requests> — it appears within a few seconds with provider, model, tokens, cost, and latency.
+After any request, refresh <http://localhost:8000/requests> — it appears within a few seconds with provider, model, tokens, cost, and latency.
 
 ---
 
@@ -315,26 +342,6 @@ uv run pytest                      # tests
 
 > Integration tests requiring PostgreSQL skip automatically when no database is reachable.
 
-### Frontend
-
-```powershell
-cd frontend
-pnpm install
-pnpm dev                           # http://localhost:3000
-```
-
-Quality gates:
-
-```powershell
-pnpm lint
-pnpm typecheck
-pnpm test                          # vitest unit tests
-pnpm test:e2e                      # playwright (needs a running dev server)
-pnpm build
-```
-
-> If pnpm is blocked by PowerShell's execution policy, run `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force` first.
-
 ---
 
 ## Configuration reference
@@ -346,7 +353,7 @@ Key `.env` variables:
 | `APP_ENV`                | `development`            | Environment name                                       |
 | `SECRET_KEY`             | —                        | Session signing key                                    |
 | `DATABASE_URL`           | —                        | Only used when running the backend outside Docker      |
-| `CORS_ALLOW_ORIGINS`     | `http://localhost:3000`  | Comma-separated origin allowlist                       |
+| `CORS_ALLOW_ORIGINS`     | `http://localhost:8000`  | Comma-separated origin allowlist (mostly relevant only if you build a separate client) |
 | `ADMIN_EMAIL`            | —                        | Admin login email                                      |
 | `ADMIN_PASSWORD_HASH`    | —                        | Single bcrypt hash                                     |
 | `LITELLM_MASTER_KEY`     | —                        | Bearer token for the gateway                           |
@@ -386,9 +393,9 @@ Key `.env` variables:
 
 ```
 llm-lens/
-├── backend/          FastAPI app, SQLAlchemy models, Alembic migrations, tests
-├── frontend/         Next.js 15 dashboard (App Router, TanStack Query, shadcn/ui)
-├── litellm/          Gateway config + telemetry callback
+├── backend/          FastAPI app (JSON API + Jinja2/HTMX dashboard), SQLAlchemy models, Alembic migrations, tests
+├── sdk/              Installable `llm-lens` tracing SDK (@trace decorators, no gateway required)
+├── litellm/          Optional gateway config + telemetry callback
 ├── specs/            Feature specification, plan, and task breakdown
 ├── docs/             Additional documentation
 └── docker-compose.yml

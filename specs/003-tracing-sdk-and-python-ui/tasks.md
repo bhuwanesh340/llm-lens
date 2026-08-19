@@ -95,17 +95,19 @@
 
 **Independent Test**: Each of overview/usage/costs/models/requests/projects/errors is reachable and shows equivalent data from the Python UI alone.
 
-- [ ] T232 [P] Port overview page (summary cards + cost timeseries chart) to backend/app/templates/overview.html (server-rendered chart via a lightweight JS chart lib loaded from static assets, no bundler)
-- [ ] T233 [P] Port usage page to backend/app/templates/usage.html
-- [ ] T234 [P] Port costs page (by-model/by-provider/by-project tabs via HTMX) to backend/app/templates/costs.html
-- [ ] T235 [P] Port models list/detail pages to backend/app/templates/models/
-- [ ] T236 [P] Port requests list/detail pages to backend/app/templates/requests/
-- [ ] T237 [P] Port projects page (create/list/delete + API key management UI) to backend/app/templates/projects.html (feature 002 T133)
-- [ ] T238 [P] Port errors page to backend/app/templates/errors.html
+- [X] T232 [P] Port overview page (summary cards + cost timeseries chart) to backend/app/templates/overview.html (server-rendered chart via a lightweight JS chart lib loaded from static assets, no bundler)
+- [X] T233 [P] Port usage page to backend/app/templates/usage.html
+- [X] T234 [P] Port costs page (by-model/by-provider/by-project tabs via HTMX) to backend/app/templates/costs.html
+- [X] T235 [P] Port models list/detail pages to backend/app/templates/models/
+- [X] T236 [P] Port requests list/detail pages to backend/app/templates/requests/
+- [X] T237 [P] Port projects page (create/list/delete + API key management UI) to backend/app/templates/projects.html (feature 002 T133)
+- [X] T238 [P] Port errors page to backend/app/templates/errors.html
 - [X] T239 Port login page to backend/app/templates/login.html, reusing existing session-cookie auth (done ahead of schedule in Phase 3, needed for page-auth testability — see backend/app/web/auth.py + templates/login.html)
-- [ ] T240 Shared filter-bar partial (date range, project, provider, model, environment) as an HTMX-swappable Jinja include, replacing frontend/src/components/filter-bar.tsx
+- [X] T240 Shared filter-bar partial (date range, project, provider, model, environment) as an HTMX-swappable Jinja include, replacing frontend/src/components/filter-bar.tsx
 
 **Checkpoint**: SC-205 — every current React view has a working Python-rendered equivalent.
+
+**Implementation notes (added post-implementation)**: Overview/Costs cost timeseries render as a pure CSS/HTML bar chart (`.bar-chart` in theme.css) driven by inline `height: N%` styles — no external JS charting library or CDN dependency, satisfying "no bundler" without the reliability risk of a third-party script. Costs/Usage/Errors pages use a `?view=` query param + HTMX tab links (`.tabs`/`.tab-link`) to swap breakdown tables (by-model/by-provider/by-project/by-code) without a full page reload; `app/web/filters.py` exposes a `filters_qs` Jinja global so tab and pagination links round-trip the currently applied `RangeFilters`. All new web/ routers (`overview.py`, `usage.py`, `costs.py`, `models.py`, `requests.py`, `projects.py`, `errors.py`) follow the `traces.py` pattern exactly: gated by `require_admin_page_session`, call service-layer functions directly (no HTTP round-trip through `/api/v1`), and branch on the `HX-Request` header to return either a partial or the full page. Fixed a falsy-zero bug found during manual verification: several templates used `{% if x.total_cost %}` (and similarly for latency/ttft fields) to decide between showing a formatted value or `"—"`, but Jinja/Python treat `Decimal("0")`/`0.0` as falsy, so legitimate zero-cost requests (e.g. local Ollama models) rendered as "—" or as `$0.0000` (4-decimal rounding of very small non-zero costs also collapsed to `$0.0000`). Changed all such checks to `is not none` and bumped cost formatting to 6 decimal places (`$%.6f`) across overview/costs/models templates for consistency with the existing requests/traces precision.
 
 ---
 
@@ -113,10 +115,12 @@
 
 **Goal**: Remove the Node build/image from the default path; ship the SDK as an installable package.
 
-- [ ] T241 Remove `frontend` service from docker-compose.yml; remove the `Dockerfile`/build context (SC-206)
-- [ ] T242 Update root README.md: quickstart now `docker compose up` with just `postgres` + `backend` (+ optional `litellm` profile), plus `pip install ./sdk` usage
-- [ ] T243 Delete frontend/ directory once Phase 4 checkpoint is verified against every page
-- [ ] T244 Publish sdk/ build metadata (version pin, classifiers) so it is ready for an internal package index or PyPI later
+- [X] T241 Remove `frontend` service from docker-compose.yml; remove the `Dockerfile`/build context (SC-206)
+- [X] T242 Update root README.md: quickstart now `docker compose up` with just `postgres` + `backend` (+ optional `litellm` profile), plus `pip install ./sdk` usage
+- [X] T243 Delete frontend/ directory once Phase 4 checkpoint is verified against every page
+- [X] T244 Publish sdk/ build metadata (version pin, classifiers) so it is ready for an internal package index or PyPI later
+
+**Implementation notes (added post-implementation)**: `docker-compose.yml` now only has `postgres`+`backend` running by default; `litellm` was made opt-in via `profiles: ["litellm"]` (start with `docker compose --profile litellm up`); `CORS_ALLOW_ORIGINS` default moved from port 3000 to 8000. Root `README.md` was rewritten to remove all Next.js/Node/pnpm references, document the SDK-based (`pip install ./sdk` + `@llm_lens.trace()`) instrumentation path, and update all dashboard URLs to port 8000. `frontend/` directory was deleted (confirmed with user first since it's a destructive action) — fully recoverable via git history since all files were tracked. `sdk/pyproject.toml` gained `keywords` and `classifiers` (Development Status, Python 3.9-3.13, Topic, Typing :: Typed) and `[project.urls]` (Homepage/Repository); no `license` classifier/field was added since no LICENSE file exists in the repo yet — that's a separate decision for the user to make. Version kept at `0.1.0` as an appropriate pre-release pin. **PyPI distribution name**: `name = "llm-lens"` was already taken on PyPI by an unrelated package (confirmed via the PyPI JSON API), so the distribution name was changed to `pyllmlens` (confirmed available, 404 on `pypi.org/pypi/pyllmlens/json`) in `sdk/pyproject.toml` + `sdk/README.md`; the importable module name stays `llm_lens` (`import llm_lens` unchanged) — only what you `pip install` changes. `uv lock`/`uv build`/`uv sync`/`pytest` all re-run clean after the rename (14 passed).
 
 ## Phase 6: Validation
 
