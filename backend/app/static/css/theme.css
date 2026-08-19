@@ -297,3 +297,133 @@ tr.clickable-row:hover {
   font-size: 0.75rem;
   margin-left: 0.35rem;
 }
+
+/* Analytics pages (overview/usage/costs/models/requests/projects/errors) */
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.stat-card {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.9rem 1rem;
+}
+
+.stat-label {
+  font-size: 0.78rem;
+  color: var(--muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.stat-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-top: 0.25rem;
+}
+
+.stat-hint {
+  font-size: 0.78rem;
+  color: var(--muted-foreground);
+  margin-top: 0.15rem;
+}
+
+.tabs {
+  display: flex;
+  gap: 0.4rem;
+  margin-bottom: 0.9rem;
+}
+
+.tab-link {
+  padding: 0.35rem 0.8rem;
+  border-radius: var(--radius);
+  font-size: 0.85rem;
+  text-decoration: none;
+  color: var(--muted-foreground);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  background: none;
+}
+
+.tab-link.active {
+  background-color: color-mix(in oklch, var(--primary) 12%, transparent);
+  color: var(--primary);
+  border-color: color-mix(in oklch, var(--primary) 40%, transparent);
+}
+
+.bar-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 160px;
+  padding-top: 0.5rem;
+}
+
+.bar-chart-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  min-width: 6px;
+}
+
+.bar-chart-bar {
+  width: 100%;
+  background-color: var(--primary);
+  border-radius: 2px 2px 0 0;
+  min-height: 2px;
+}
+
+.bar-chart-label {
+  font-size: 0.65rem;
+  color: var(--muted-foreground);
+  margin-top: 0.3rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.text-muted {
+  color: var(--muted-foreground);
+}
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: end;
+  margin-bottom: 1rem;
+}
+
+.key-plaintext {
+  font-family: ui-monospace, "SF Mono", monospace;
+  background-color: var(--muted);
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius);
+  word-break: break-all;
+  display: block;
+  margin: 0.5rem 0;
+}
+
+.btn-danger {
+  background-color: var(--destructive);
+  color: var(--foreground);
+}
+
+.btn-link {
+  background: none;
+  color: var(--primary);
+  font-weight: 600;
+  padding: 0.35rem 0;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+}

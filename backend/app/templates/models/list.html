@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Models — LLM Lens{% endblock %}
+{% block content %}
+  <h1>Models</h1>
+
+  {% set filter_action = "/models" %}
+  {% set filter_target = "models-results" %}
+  {% include "_filter_bar.html" %}
+
+  <div id="models-results">
+    {% include "models/_results.html" %}
+  </div>
+{% endblock %}

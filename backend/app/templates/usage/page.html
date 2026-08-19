@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Usage — LLM Lens{% endblock %}
+{% block content %}
+  <h1>Usage</h1>
+
+  {% set filter_action = "/usage" %}
+  {% set filter_target = "usage-results" %}
+  {% include "_filter_bar.html" %}
+
+  <div id="usage-results">
+    {% include "usage/_results.html" %}
+  </div>
+{% endblock %}

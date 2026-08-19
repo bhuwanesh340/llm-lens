@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}{{ item.request_id }} — LLM Lens{% endblock %}
+{% block content %}
+  <p><a href="/requests">&larr; Back to requests</a></p>
+  <h1>{{ item.request_id }}</h1>
+  <p class="text-muted">{{ item.created_at.strftime("%Y-%m-%d %H:%M:%S") }} &middot; {{ item.provider }} / {{ item.model }}</p>
+
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="stat-label">Status</div>
+      <div class="stat-value"><span class="badge badge-{{ item.status }}">{{ item.status }}</span></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Input tokens</div>
+      <div class="stat-value">{{ "{:,}".format(item.input_tokens) }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Output tokens</div>
+      <div class="stat-value">{{ "{:,}".format(item.output_tokens) }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Total tokens</div>
+      <div class="stat-value">{{ "{:,}".format(item.total_tokens) }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Cost</div>
+      <div class="stat-value">{{ "$%.6f"|format(item.total_cost) if item.total_cost else "—" }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Latency</div>
+      <div class="stat-value">{{ item.latency_ms }} ms</div>
+    </div>
+    {% if item.ttft_ms %}
+    <div class="stat-card">
+      <div class="stat-label">TTFT</div>
+      <div class="stat-value">{{ item.ttft_ms }} ms</div>
+    </div>
+    {% endif %}
+    <div class="stat-card">
+      <div class="stat-label">Environment</div>
+      <div class="stat-value">{{ item.environment or "—" }}</div>
+    </div>
+  </div>
+
+  {% if item.status == "error" %}
+    <div class="card">
+      <h3>Error</h3>
+      <p><strong>{{ item.error_type or "Unknown" }}</strong>{% if item.error_code %} ({{ item.error_code }}){% endif %}</p>
+      {% if item.error_message %}<pre>{{ item.error_message }}</pre>{% endif %}
+    </div>
+  {% endif %}
+
+  {% if item.metadata %}
+    <div class="card">
+      <h3>Metadata</h3>
+      <pre>{{ item.metadata }}</pre>
+    </div>
+  {% endif %}
+{% endblock %}

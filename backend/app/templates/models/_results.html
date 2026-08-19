@@ -1,0 +1,32 @@
+{% if not rows %}
+  <div class="empty-state">No requests recorded for this range.</div>
+{% else %}
+  <table>
+    <thead>
+      <tr>
+        <th>Model</th>
+        <th>Provider</th>
+        <th>Requests</th>
+        <th>Total tokens</th>
+        <th>Total cost</th>
+        <th>Avg latency</th>
+        <th>P95 latency</th>
+        <th>Error rate</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in rows %}
+        <tr class="clickable-row" onclick="window.location='/models/{{ row.model }}?{{ filters_qs(filters) }}'">
+          <td>{{ row.model }}</td>
+          <td>{{ row.provider }}</td>
+          <td>{{ row.request_count }}</td>
+          <td>{{ "{:,}".format(row.total_tokens) }}</td>
+          <td>{{ "$%.4f"|format(row.total_cost) if row.total_cost else "$0.0000" }}</td>
+          <td>{{ row.avg_latency_ms | round | int if row.avg_latency_ms else "—" }}{% if row.avg_latency_ms %} ms{% endif %}</td>
+          <td>{{ row.p95_latency_ms | round | int if row.p95_latency_ms else "—" }}{% if row.p95_latency_ms %} ms{% endif %}</td>
+          <td>{{ "%.1f"|format(row.error_rate * 100) }}%</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endif %}

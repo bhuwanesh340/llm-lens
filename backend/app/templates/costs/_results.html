@@ -1,0 +1,48 @@
+<div class="card">
+  <h3>Cost over time</h3>
+  {% if not timeseries %}
+    <p class="text-muted">No data for this range.</p>
+  {% else %}
+    <div class="bar-chart">
+      {% for point in timeseries %}
+        <div class="bar-chart-col">
+          <div class="bar-chart-bar" style="height: {{ ((point.total_cost | float) / max_cost * 100) if point.total_cost else 1 }}%;" title="{{ point.date.strftime('%Y-%m-%d') }}: {{ "$%.4f"|format(point.total_cost) if point.total_cost else "$0.0000" }}"></div>
+          <div class="bar-chart-label">{{ point.date.strftime('%m/%d') }}</div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+
+<div class="card">
+  <div class="tabs">
+    <a class="tab-link {% if view == 'model' %}active{% endif %}" hx-get="/costs?view=model&{{ filters_qs(filters) }}" hx-target="#costs-results" hx-push-url="true">By model</a>
+    <a class="tab-link {% if view == 'provider' %}active{% endif %}" hx-get="/costs?view=provider&{{ filters_qs(filters) }}" hx-target="#costs-results" hx-push-url="true">By provider</a>
+    <a class="tab-link {% if view == 'project' %}active{% endif %}" hx-get="/costs?view=project&{{ filters_qs(filters) }}" hx-target="#costs-results" hx-push-url="true">By project</a>
+  </div>
+
+  {% if not breakdown %}
+    <p class="text-muted">No data for this range.</p>
+  {% else %}
+    <table>
+      <thead>
+        <tr>
+          <th>{{ {"model": "Model", "provider": "Provider", "project": "Project"}[view] }}</th>
+          <th>Requests</th>
+          <th>Total cost</th>
+          <th>Unknown cost</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in breakdown %}
+          <tr>
+            <td>{% if view == "project" %}{{ project_names.get(row.key, row.key) }}{% else %}{{ row.key }}{% endif %}</td>
+            <td>{{ row.request_count }}</td>
+            <td>{{ "$%.4f"|format(row.total_cost) if row.total_cost else "$0.0000" }}</td>
+            <td>{{ row.unknown_cost_count }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+</div>

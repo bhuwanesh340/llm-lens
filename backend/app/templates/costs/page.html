@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Costs — LLM Lens{% endblock %}
+{% block content %}
+  <h1>Costs</h1>
+
+  {% set filter_action = "/costs" %}
+  {% set filter_target = "costs-results" %}
+  {% include "_filter_bar.html" %}
+
+  <div id="costs-results">
+    {% include "costs/_results.html" %}
+  </div>
+{% endblock %}

@@ -1,0 +1,47 @@
+<div class="stat-grid">
+  <div class="stat-card">
+    <div class="stat-label">Requests</div>
+    <div class="stat-value">{{ summary.total_requests }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Errors</div>
+    <div class="stat-value">{{ summary.error_count }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Error rate</div>
+    <div class="stat-value">{{ "%.1f"|format(summary.error_rate * 100) }}%</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="tabs">
+    <a class="tab-link {% if view == 'provider' %}active{% endif %}" hx-get="/errors?view=provider&{{ filters_qs(filters) }}" hx-target="#errors-results" hx-push-url="true">By provider</a>
+    <a class="tab-link {% if view == 'model' %}active{% endif %}" hx-get="/errors?view=model&{{ filters_qs(filters) }}" hx-target="#errors-results" hx-push-url="true">By model</a>
+    <a class="tab-link {% if view == 'code' %}active{% endif %}" hx-get="/errors?view=code&{{ filters_qs(filters) }}" hx-target="#errors-results" hx-push-url="true">By error code</a>
+  </div>
+
+  {% if not breakdown %}
+    <p class="text-muted">No errors for this range.</p>
+  {% else %}
+    <table>
+      <thead>
+        <tr>
+          <th>{{ {"provider": "Provider", "model": "Model", "code": "Error code"}[view] }}</th>
+          <th>Errors</th>
+          <th>Total</th>
+          <th>Error rate</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in breakdown %}
+          <tr>
+            <td>{{ row.key }}</td>
+            <td>{{ row.error_count }}</td>
+            <td>{{ row.total_count }}</td>
+            <td>{{ "%.1f"|format(row.error_rate * 100) }}%</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+</div>

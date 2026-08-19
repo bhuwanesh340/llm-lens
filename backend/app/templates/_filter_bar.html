@@ -1,0 +1,37 @@
+{# Shared date-range + project/provider/model/environment filter bar (T240).
+   Caller must set `filter_action` (URL) and `filter_target` (DOM id to
+   swap) before including; reads `filters` and `projects` from context. #}
+<form class="filter-bar" hx-get="{{ filter_action }}" hx-target="#{{ filter_target }}" hx-push-url="true">
+  <div class="field">
+    <label for="from">From</label>
+    <input type="datetime-local" id="from" name="from" value="{{ filters.date_from.strftime('%Y-%m-%dT%H:%M') if filters.date_from else '' }}">
+  </div>
+  <div class="field">
+    <label for="to">To</label>
+    <input type="datetime-local" id="to" name="to" value="{{ filters.date_to.strftime('%Y-%m-%dT%H:%M') if filters.date_to else '' }}">
+  </div>
+  <div class="field">
+    <label for="project_id">Project</label>
+    <select id="project_id" name="project_id">
+      <option value="">All projects</option>
+      <option value="unassigned" {% if filters.project_id == "unassigned" %}selected{% endif %}>Unassigned</option>
+      {% for project in projects %}
+        <option value="{{ project.id }}" {% if filters.project_id == project.id|string %}selected{% endif %}>{{ project.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="field">
+    <label for="provider">Provider</label>
+    <input type="text" id="provider" name="provider" placeholder="openai" value="{{ filters.provider or '' }}">
+  </div>
+  <div class="field">
+    <label for="model">Model</label>
+    <input type="text" id="model" name="model" placeholder="gpt-4o-mini" value="{{ filters.model or '' }}">
+  </div>
+  <div class="field">
+    <label for="environment">Environment</label>
+    <input type="text" id="environment" name="environment" placeholder="production" value="{{ filters.environment or '' }}">
+  </div>
+  <button type="submit">Apply</button>
+  <a class="tab-link" href="{{ filter_action }}">Clear</a>
+</form>

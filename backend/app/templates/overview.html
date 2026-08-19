@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Overview — LLM Lens{% endblock %}
+{% block content %}
+  <h1>Overview</h1>
+
+  {% set filter_action = "/" %}
+  {% set filter_target = "overview-results" %}
+  {% include "_filter_bar.html" %}
+
+  <div id="overview-results">
+    {% include "_overview_results.html" %}
+  </div>
+{% endblock %}
+

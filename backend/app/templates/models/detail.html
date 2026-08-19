@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}{{ model_id }} — LLM Lens{% endblock %}
+{% block content %}
+  <p><a href="/models?{{ filters_qs(filters) }}">&larr; Back to models</a></p>
+  <h1>{{ row.model }}</h1>
+  <p class="text-muted">{{ row.provider }}</p>
+
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="stat-label">Requests</div>
+      <div class="stat-value">{{ row.request_count }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Total tokens</div>
+      <div class="stat-value">{{ "{:,}".format(row.total_tokens) }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Total cost</div>
+      <div class="stat-value">{{ "$%.4f"|format(row.total_cost) if row.total_cost else "$0.0000" }}</div>
+      {% if row.unknown_cost_count %}<div class="stat-hint">{{ row.unknown_cost_count }} unknown</div>{% endif %}
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Avg cost / request</div>
+      <div class="stat-value">{{ "$%.4f"|format(row.avg_cost_per_request) if row.avg_cost_per_request else "—" }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Avg latency</div>
+      <div class="stat-value">{{ row.avg_latency_ms | round | int if row.avg_latency_ms else "—" }}{% if row.avg_latency_ms %} ms{% endif %}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">P95 latency</div>
+      <div class="stat-value">{{ row.p95_latency_ms | round | int if row.p95_latency_ms else "—" }}{% if row.p95_latency_ms %} ms{% endif %}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Error rate</div>
+      <div class="stat-value">{{ "%.1f"|format(row.error_rate * 100) }}%</div>
+    </div>
+  </div>
+{% endblock %}

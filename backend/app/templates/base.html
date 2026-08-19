@@ -10,6 +10,13 @@
 <body>
   <nav class="nav">
     <span class="nav-brand">LLM Lens</span>
+    <a class="nav-link {% if request.url.path == '/' %}active{% endif %}" href="/">Dashboard</a>
+    <a class="nav-link {% if request.url.path.startswith('/usage') %}active{% endif %}" href="/usage">Usage</a>
+    <a class="nav-link {% if request.url.path.startswith('/costs') %}active{% endif %}" href="/costs">Costs</a>
+    <a class="nav-link {% if request.url.path.startswith('/models') %}active{% endif %}" href="/models">Models</a>
+    <a class="nav-link {% if request.url.path.startswith('/requests') %}active{% endif %}" href="/requests">Requests</a>
+    <a class="nav-link {% if request.url.path.startswith('/projects') %}active{% endif %}" href="/projects">Projects</a>
+    <a class="nav-link {% if request.url.path.startswith('/errors') %}active{% endif %}" href="/errors">Errors</a>
     <a class="nav-link {% if request.url.path.startswith('/traces') %}active{% endif %}" href="/traces">Traces</a>
     <span class="nav-spacer"></span>
     <a class="nav-link" href="/logout">Log out</a>

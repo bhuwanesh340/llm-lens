@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Projects — LLM Lens{% endblock %}
+{% block content %}
+  <h1>Projects</h1>
+
+  <div class="card">
+    <h3>New project</h3>
+    {% if error %}<p class="text-muted" style="color: var(--destructive);">{{ error }}</p>{% endif %}
+    <form method="post" action="/projects" class="form-row">
+      <div class="field">
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" required>
+      </div>
+      <div class="field">
+        <label for="description">Description</label>
+        <input type="text" id="description" name="description">
+      </div>
+      <div class="field">
+        <label for="environment">Environment</label>
+        <input type="text" id="environment" name="environment" placeholder="production">
+      </div>
+      <button type="submit">Create</button>
+    </form>
+  </div>
+
+  {% if not projects %}
+    <div class="empty-state card">No projects yet.</div>
+  {% else %}
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Slug</th>
+          <th>Environment</th>
+          <th>Auto-created</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for project in projects %}
+          <tr class="clickable-row" onclick="window.location='/projects/{{ project.id }}'">
+            <td>{{ project.name }}</td>
+            <td>{{ project.slug }}</td>
+            <td>{{ project.environment or "—" }}</td>
+            <td>{{ "Yes" if project.auto_created else "No" }}</td>
+            <td onclick="event.stopPropagation()">
+              <form method="post" action="/projects/{{ project.id }}/delete" onsubmit="return confirm('Delete this project?');">
+                <button type="submit" class="btn-danger">Delete</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+{% endblock %}

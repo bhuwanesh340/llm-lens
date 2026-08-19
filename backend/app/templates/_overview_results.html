@@ -1,0 +1,44 @@
+<div class="stat-grid">
+  <div class="stat-card">
+    <div class="stat-label">Requests</div>
+    <div class="stat-value">{{ overview.total_requests }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Total cost</div>
+    <div class="stat-value">{{ "$%.4f"|format(overview.total_cost) if overview.total_cost else "$0.0000" }}</div>
+    {% if overview.unknown_cost_count %}<div class="stat-hint">{{ overview.unknown_cost_count }} unknown</div>{% endif %}
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Total tokens</div>
+    <div class="stat-value">{{ "{:,}".format(overview.total_tokens) }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Avg latency</div>
+    <div class="stat-value">{{ overview.avg_latency_ms | round | int if overview.avg_latency_ms else "—" }}{% if overview.avg_latency_ms %} ms{% endif %}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Error rate</div>
+    <div class="stat-value">{{ "%.1f"|format(overview.error_rate * 100) }}%</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Active models</div>
+    <div class="stat-value">{{ overview.active_models }}</div>
+  </div>
+</div>
+
+<div class="card">
+  <h3>Cost over time</h3>
+  {% if not timeseries %}
+    <p class="text-muted">No data for this range.</p>
+  {% else %}
+    <div class="bar-chart">
+      {% for point in timeseries %}
+        <div class="bar-chart-col">
+          <div class="bar-chart-bar" style="height: {{ ((point.total_cost | float) / max_cost * 100) if point.total_cost else 1 }}%;" title="{{ point.date.strftime('%Y-%m-%d') }}: {{ "$%.4f"|format(point.total_cost) if point.total_cost else "$0.0000" }}"></div>
+          <div class="bar-chart-label">{{ point.date.strftime('%m/%d') }}</div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+

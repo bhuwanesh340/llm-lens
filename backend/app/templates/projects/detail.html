@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}{{ project.name }} — LLM Lens{% endblock %}
+{% block content %}
+  <p><a href="/projects">&larr; Back to projects</a></p>
+  <h1>{{ project.name }}</h1>
+  <p class="text-muted">{{ project.slug }}{% if project.environment %} &middot; {{ project.environment }}{% endif %}</p>
+
+  {% if created_key %}
+    <div class="card">
+      <h3>API key created</h3>
+      <p>Copy this key now — it will not be shown again.</p>
+      <code class="key-plaintext">{{ created_key }}</code>
+    </div>
+  {% endif %}
+
+  <div class="card">
+    <h3>New API key</h3>
+    <form method="post" action="/projects/{{ project.id }}/keys" class="form-row">
+      <div class="field">
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" placeholder="production key" required>
+      </div>
+      <button type="submit">Generate</button>
+    </form>
+  </div>
+
+  {% if not keys %}
+    <div class="empty-state card">No API keys yet.</div>
+  {% else %}
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Prefix</th>
+          <th>Status</th>
+          <th>Last used</th>
+          <th>Created</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for key in keys %}
+          <tr>
+            <td>{{ key.name }}</td>
+            <td><code>{{ key.key_prefix }}…</code></td>
+            <td><span class="badge {{ 'badge-success' if key.enabled else 'badge-error' }}">{{ "enabled" if key.enabled else "revoked" }}</span></td>
+            <td>{{ key.last_used_at.strftime("%Y-%m-%d %H:%M:%S") if key.last_used_at else "never" }}</td>
+            <td>{{ key.created_at.strftime("%Y-%m-%d %H:%M:%S") }}</td>
+            <td>
+              {% if key.enabled %}
+                <form method="post" action="/projects/{{ project.id }}/keys/{{ key.id }}/revoke" onsubmit="return confirm('Revoke this key?');">
+                  <button type="submit" class="btn-danger">Revoke</button>
+                </form>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+{% endblock %}

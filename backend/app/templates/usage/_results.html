@@ -1,0 +1,58 @@
+<div class="stat-grid">
+  <div class="stat-card">
+    <div class="stat-label">Requests</div>
+    <div class="stat-value">{{ summary.total_requests }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Input tokens</div>
+    <div class="stat-value">{{ "{:,}".format(summary.input_tokens) }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Output tokens</div>
+    <div class="stat-value">{{ "{:,}".format(summary.output_tokens) }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Total tokens</div>
+    <div class="stat-value">{{ "{:,}".format(summary.total_tokens) }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Avg tokens / request</div>
+    <div class="stat-value">{{ summary.avg_tokens_per_request | round | int }}</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="tabs">
+    <a class="tab-link {% if view == 'model' %}active{% endif %}" hx-get="/usage?view=model&{{ filters_qs(filters) }}" hx-target="#usage-results" hx-push-url="true">By model</a>
+    <a class="tab-link {% if view == 'provider' %}active{% endif %}" hx-get="/usage?view=provider&{{ filters_qs(filters) }}" hx-target="#usage-results" hx-push-url="true">By provider</a>
+  </div>
+
+  {% if not breakdown %}
+    <p class="text-muted">No data for this range.</p>
+  {% else %}
+    <table>
+      <thead>
+        <tr>
+          <th>{{ "Model" if view == "model" else "Provider" }}</th>
+          <th>Requests</th>
+          <th>Input tokens</th>
+          <th>Output tokens</th>
+          <th>Total tokens</th>
+          <th>Avg / request</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in breakdown %}
+          <tr>
+            <td>{{ row.key }}</td>
+            <td>{{ row.request_count }}</td>
+            <td>{{ "{:,}".format(row.input_tokens) }}</td>
+            <td>{{ "{:,}".format(row.output_tokens) }}</td>
+            <td>{{ "{:,}".format(row.total_tokens) }}</td>
+            <td>{{ row.avg_tokens_per_request | round | int }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+</div>

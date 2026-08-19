@@ -1,0 +1,44 @@
+{% if not result.items %}
+  <div class="empty-state card">
+    <h3>No requests match these filters</h3>
+  </div>
+{% else %}
+  <table>
+    <thead>
+      <tr>
+        <th>Created</th>
+        <th>Provider</th>
+        <th>Model</th>
+        <th>Environment</th>
+        <th>Tokens</th>
+        <th>Cost</th>
+        <th>Latency</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in result.items %}
+        <tr class="clickable-row" onclick="window.location='/requests/{{ item.request_id }}'">
+          <td>{{ item.created_at.strftime("%Y-%m-%d %H:%M:%S") }}</td>
+          <td>{{ item.provider }}</td>
+          <td>{{ item.model }}</td>
+          <td>{{ item.environment or "—" }}</td>
+          <td>{{ "{:,}".format(item.total_tokens) }}</td>
+          <td>{{ "$%.6f"|format(item.total_cost) if item.total_cost else "—" }}</td>
+          <td>{{ item.latency_ms }} ms</td>
+          <td><span class="badge badge-{{ item.status }}">{{ item.status }}</span></td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="pagination">
+    <span>Page {{ result.meta.page }} of {{ result.meta.total_pages }} ({{ result.meta.total_items }} requests)</span>
+    {% if result.meta.page > 1 %}
+      <button hx-get="/requests?page={{ result.meta.page - 1 }}&{{ filters_qs(filters) }}" hx-target="#requests-results" hx-push-url="true">Prev</button>
+    {% endif %}
+    {% if result.meta.page < result.meta.total_pages %}
+      <button hx-get="/requests?page={{ result.meta.page + 1 }}&{{ filters_qs(filters) }}" hx-target="#requests-results" hx-push-url="true">Next</button>
+    {% endif %}
+  </div>
+{% endif %}
