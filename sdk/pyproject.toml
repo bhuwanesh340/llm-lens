@@ -4,6 +4,8 @@ version = "0.1.0"
 description = "Decorator-based nested tracing SDK for LLM Lens"
 readme = "README.md"
 requires-python = ">=3.9"
+license = "MIT"
+license-files = ["LICENSE"]
 keywords = ["llm", "observability", "tracing", "telemetry"]
 classifiers = [
     "Development Status :: 3 - Alpha",
