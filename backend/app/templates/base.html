@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}LLM Lens{% endblock %}</title>
+  <link rel="stylesheet" href="/static/css/theme.css" />
+  <script src="https://unpkg.com/htmx.org@2.0.4" defer></script>
+</head>
+<body>
+  <nav class="nav">
+    <span class="nav-brand">LLM Lens</span>
+    <a class="nav-link {% if request.url.path.startswith('/traces') %}active{% endif %}" href="/traces">Traces</a>
+    <span class="nav-spacer"></span>
+    <a class="nav-link" href="/logout">Log out</a>
+  </nav>
+  <div class="container">
+    {% block content %}{% endblock %}
+  </div>
+</body>
+</html>

@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Trace {{ trace_id }} — LLM Lens{% endblock %}
+{% block content %}
+  {% if not detail %}
+    <div class="empty-state card">
+      <h3>Trace not found</h3>
+      <p><a href="/traces">&larr; Back to traces</a></p>
+    </div>
+  {% else %}
+    <p><a href="/traces">&larr; Back to traces</a></p>
+    <div class="card">
+      <h2>{{ detail.trace.name }}</h2>
+      <p style="color: var(--muted-foreground);">
+        Project: {{ detail.project_name or "Unassigned" }} &middot;
+        Status: <span class="badge badge-{{ detail.trace.status }}">{{ detail.trace.status }}</span> &middot;
+        Started: {{ detail.trace.started_at.strftime("%Y-%m-%d %H:%M:%S") }} &middot;
+        Duration: {{ detail.trace.duration_ms | default(0) }} ms &middot;
+        Spans: {{ detail.flat_ordered | length }}
+      </p>
+    </div>
+
+    <div class="card">
+      <h3>Waterfall</h3>
+      <div class="waterfall">
+        {% for node in detail.flat_ordered %}
+          <div class="waterfall-row" style="padding-left: {{ node.depth * 1.25 }}rem;">
+            <div class="waterfall-label" title="{{ node.span.name }}">
+              {{ node.span.name }}
+              {% if node.is_orphan %}<span class="orphan-flag">orphan</span>{% endif %}
+            </div>
+            <div class="waterfall-track">
+              <div
+                class="waterfall-bar kind-{{ node.span.kind }} {% if node.span.status == 'error' %}status-error{% endif %}"
+                style="left: {{ (node.offset_ms / (detail.trace.duration_ms or 1)) * 100 if detail.trace.duration_ms else 0 }}%; width: {{ node.width_pct }}%;"
+                title="{{ node.span.kind }} · {{ node.span.status }}"
+              ></div>
+            </div>
+            <div class="waterfall-meta">
+              {{ node.span.duration_ms | default(0) }} ms
+              {% if node.span.kind == "llm" and node.span.total_cost %}
+                &middot; ${{ "%.6f"|format(node.span.total_cost) }}
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Spans</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Kind</th>
+            <th>Status</th>
+            <th>Provider / Model</th>
+            <th>Tokens</th>
+            <th>Cost</th>
+            {% if show_content %}<th>Input / Output</th>{% endif %}
+            <th>Error</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for node in detail.flat_ordered %}
+            <tr>
+              <td>{{ "&nbsp;&nbsp;" * node.depth | safe }}{{ node.span.name }}</td>
+              <td><span class="badge kind-{{ node.span.kind }}" style="color: var(--background);">{{ node.span.kind }}</span></td>
+              <td><span class="badge badge-{{ node.span.status }}">{{ node.span.status }}</span></td>
+              <td>{{ node.span.provider or "—" }}{% if node.span.model %} / {{ node.span.model }}{% endif %}</td>
+              <td>
+                {% if node.span.total_tokens %}
+                  {{ node.span.input_tokens }} in / {{ node.span.output_tokens }} out
+                {% else %}—{% endif %}
+              </td>
+              <td>{{ "$%.6f"|format(node.span.total_cost) if node.span.total_cost else "—" }}</td>
+              {% if show_content %}
+                <td>
+                  <details><summary>view</summary><pre>{{ node.span.input_ | tojson(indent=2) }}
+{{ node.span.output_ | tojson(indent=2) }}</pre></details>
+                </td>
+              {% endif %}
+              <td>{{ node.span.error_message or "—" }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+{% endblock %}

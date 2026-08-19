@@ -5,6 +5,7 @@ from __future__ import annotations
 from fastapi import APIRouter
 
 from app.api.v1 import (
+    api_keys,
     auth,
     costs,
     errors,
@@ -14,6 +15,7 @@ from app.api.v1 import (
     projects,
     requests,
     telemetry,
+    traces,
     usage,
 )
 
@@ -27,4 +29,6 @@ api_router.include_router(costs.router)
 api_router.include_router(models.router)
 api_router.include_router(requests.router)
 api_router.include_router(projects.router)
+api_router.include_router(api_keys.router)
+api_router.include_router(traces.router)
 api_router.include_router(errors.router)

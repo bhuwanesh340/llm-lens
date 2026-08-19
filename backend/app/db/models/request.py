@@ -23,8 +23,12 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql import func
+from sqlalchemy.types import JSON
 
 from app.db.base import Base
+
+# Portable JSON: plain JSON everywhere, upgraded to JSONB automatically on postgres.
+_PORTABLE_JSON = JSON().with_variant(JSONB(), "postgresql")
 
 # FR-003/FR-004: capture both success and error paths.
 REQUEST_STATUSES = ("success", "error")
@@ -93,5 +97,5 @@ class LLMRequest(Base):
     error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     metadata_: Mapped[dict[str, object]] = mapped_column(
-        "metadata", JSONB, nullable=False, default=dict
+        "metadata", _PORTABLE_JSON, nullable=False, default=dict
     )

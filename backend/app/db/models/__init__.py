@@ -9,6 +9,8 @@ from app.db.models.model import Model
 from app.db.models.project import Project
 from app.db.models.provider import Provider
 from app.db.models.request import LLMRequest
+from app.db.models.span import Span
+from app.db.models.trace import Trace
 
 __all__ = [
     "ApiKey",
@@ -16,4 +18,6 @@ __all__ = [
     "Project",
     "Provider",
     "LLMRequest",
+    "Span",
+    "Trace",
 ]

@@ -1,0 +1,56 @@
+{% if not has_any_traces %}
+  <div class="empty-state card">
+    <h3>No traces yet</h3>
+    <p>Instrument your code with the <code>llm-lens</code> SDK to see traces here (T230).</p>
+    <pre>pip install ./sdk
+
+import llm_lens
+
+llm_lens.configure(project="My App", base_url="http://localhost:8000")
+
+@llm_lens.trace()
+def answer_question(question: str) -> str:
+    ...</pre>
+  </div>
+{% elif not result.items %}
+  <div class="empty-state card">
+    <h3>No traces match these filters</h3>
+  </div>
+{% else %}
+  <table>
+    <thead>
+      <tr>
+        <th>Started</th>
+        <th>Project</th>
+        <th>Name</th>
+        <th>Duration</th>
+        <th>Spans</th>
+        <th>Cost</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in result.items %}
+        <tr class="clickable-row" onclick="window.location='/traces/{{ item.id }}'">
+          <td>{{ item.started_at.strftime("%Y-%m-%d %H:%M:%S") }}</td>
+          <td>{{ item.project_name or "Unassigned" }}</td>
+          <td>{{ item.name }}</td>
+          <td>{{ item.duration_ms | default(0) }} ms</td>
+          <td>{{ item.span_count }}</td>
+          <td>{{ "$%.6f"|format(item.total_cost) if item.total_cost else "—" }}</td>
+          <td><span class="badge badge-{{ item.status }}">{{ item.status }}</span></td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="pagination">
+    <span>Page {{ result.page }} of {{ result.total_pages }} ({{ result.total }} traces)</span>
+    {% if result.has_prev %}
+      <button hx-get="/traces?page={{ result.page - 1 }}{% if filters.project_id %}&project_id={{ filters.project_id }}{% endif %}{% if filters.status %}&status={{ filters.status }}{% endif %}" hx-target="#trace-results" hx-push-url="true">Prev</button>
+    {% endif %}
+    {% if result.has_next %}
+      <button hx-get="/traces?page={{ result.page + 1 }}{% if filters.project_id %}&project_id={{ filters.project_id }}{% endif %}{% if filters.status %}&status={{ filters.status }}{% endif %}" hx-target="#trace-results" hx-push-url="true">Next</button>
+    {% endif %}
+  </div>
+{% endif %}

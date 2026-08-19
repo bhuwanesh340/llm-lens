@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Traces — LLM Lens{% endblock %}
+{% block content %}
+  <h1>Traces</h1>
+
+  <form class="filter-bar" hx-get="/traces" hx-target="#trace-results" hx-push-url="true">
+    <div class="field">
+      <label for="project_id">Project</label>
+      <select id="project_id" name="project_id" onchange="this.form.requestSubmit()">
+        <option value="">All projects</option>
+        {% for project in projects %}
+          <option value="{{ project.id }}" {% if filters.project_id == project.id|string %}selected{% endif %}>
+            {{ project.name }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="field">
+      <label for="status">Status</label>
+      <select id="status" name="status" onchange="this.form.requestSubmit()">
+        <option value="">All statuses</option>
+        <option value="running" {% if filters.status == "running" %}selected{% endif %}>Running</option>
+        <option value="success" {% if filters.status == "success" %}selected{% endif %}>Success</option>
+        <option value="error" {% if filters.status == "error" %}selected{% endif %}>Error</option>
+      </select>
+    </div>
+    <button type="submit">Apply</button>
+  </form>
+
+  <div id="trace-results">
+    {% include "traces/_results.html" %}
+  </div>
+{% endblock %}

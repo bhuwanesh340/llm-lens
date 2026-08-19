@@ -24,19 +24,19 @@
 
 **Independent Test**: Existing traces remain attributed correctly after migration; all backend quality gates pass.
 
-- [ ] T101 [P] Rename model `Application` → `Project` in backend/app/db/models/application.py → backend/app/db/models/project.py; add `auto_created` boolean (FR-106)
-- [ ] T102 Rename `application_id` → `project_id` FK in backend/app/db/models/request.py (incl. index name)
-- [ ] T103 Rename `application_id` → `project_id` FK in backend/app/db/models/api_key.py
-- [ ] T104 Update model exports in backend/app/db/models/__init__.py and backend/app/db/base.py imports
-- [ ] T105 Write Alembic migration renaming `applications` → `projects`, `llm_requests.application_id` → `project_id`, `api_keys.application_id` → `project_id`, and adding `projects.auto_created` (FR-125)
-- [ ] T106 [P] Rename backend/app/schemas/applications.py → projects.py (`ProjectCreate`, `ProjectUpdate`, `ProjectResponse`)
-- [ ] T107 [P] Rename backend/app/services/application_service.py → project_service.py (`DuplicateSlugError` retained)
-- [ ] T108 Rename `get_costs_by_application` → `get_costs_by_project` and group column in backend/app/services/analytics_service.py
-- [ ] T109 Rename `application_id` filter → `project_id` (retaining `"unassigned"` sentinel) in backend/app/services/query_filters.py (FR-104)
-- [ ] T110 Rename backend/app/api/v1/applications.py → projects.py with prefix `/projects`; update backend/app/api/router.py
-- [ ] T111 Rename `/costs/by-application` → `/costs/by-project` in backend/app/api/v1/costs.py
-- [ ] T112 Update `application_id` → `project_id` across backend/app/api/deps.py and all v1 route filter params
-- [ ] T113 [P] Rename backend/tests/api/test_applications.py → test_projects.py and update all `application_*` references in backend/tests/
+- [X] T101 [P] Rename model `Application` → `Project` in backend/app/db/models/application.py → backend/app/db/models/project.py; add `auto_created` boolean (FR-106)
+- [X] T102 Rename `application_id` → `project_id` FK in backend/app/db/models/request.py (incl. index name)
+- [X] T103 Rename `application_id` → `project_id` FK in backend/app/db/models/api_key.py
+- [X] T104 Update model exports in backend/app/db/models/__init__.py and backend/app/db/base.py imports
+- [X] T105 Write Alembic migration renaming `applications` → `projects`, `llm_requests.application_id` → `project_id`, `api_keys.application_id` → `project_id`, and adding `projects.auto_created` (FR-125)
+- [X] T106 [P] Rename backend/app/schemas/applications.py → projects.py (`ProjectCreate`, `ProjectUpdate`, `ProjectResponse`)
+- [X] T107 [P] Rename backend/app/services/application_service.py → project_service.py (`DuplicateSlugError` retained)
+- [X] T108 Rename `get_costs_by_application` → `get_costs_by_project` and group column in backend/app/services/analytics_service.py
+- [X] T109 Rename `application_id` filter → `project_id` (retaining `"unassigned"` sentinel) in backend/app/services/query_filters.py (FR-104)
+- [X] T110 Rename backend/app/api/v1/applications.py → projects.py with prefix `/projects`; update backend/app/api/router.py
+- [X] T111 Rename `/costs/by-application` → `/costs/by-project` in backend/app/api/v1/costs.py
+- [X] T112 Update `application_id` → `project_id` across backend/app/api/deps.py and all v1 route filter params
+- [X] T113 [P] Rename backend/tests/api/test_applications.py → test_projects.py and update all `application_*` references in backend/tests/
 
 **Checkpoint**: `uv run ruff check .`, `uv run mypy app`, `uv run pytest` all pass.
 
@@ -50,16 +50,16 @@
 
 ### Tests
 
-- [ ] T114 [P] [US1] Unit tests for project name normalization + slug derivation (case, whitespace, empty, over-length) in backend/tests/unit/test_project_resolution.py (FR-103, FR-107)
-- [ ] T115 [P] [US1] Integration test: auto-create on first trace, reuse on second, concurrent-same-name creates exactly one (FR-102, FR-105) in backend/tests/integration/test_project_autocreate.py
+- [X] T114 [P] [US1] Unit tests for project name normalization + slug derivation (case, whitespace, empty, over-length) in backend/tests/unit/test_project_resolution.py (FR-103, FR-107)
+- [X] T115 [P] [US1] Integration test: auto-create on first trace, reuse on second, concurrent-same-name creates exactly one (FR-102, FR-105) in backend/tests/integration/test_project_autocreate.py
 
 ### Implementation
 
-- [ ] T116 [US1] Implement `normalize_project_name()` + `resolve_or_create_project()` in backend/app/services/project_service.py, using an atomic upsert so concurrent inserts collapse to one row (FR-102, FR-103, FR-105, FR-107)
-- [ ] T117 [US1] Add optional `project` (name) field to `RawTelemetryEvent` and resolved `project_id` to `NormalizedTelemetryEvent` in backend/app/telemetry/events.py (FR-101)
-- [ ] T118 [US1] Resolve project name → `project_id` during ingestion in backend/app/telemetry/collector.py, applying key-over-name precedence (FR-101, FR-116, FR-119)
-- [ ] T119 [US1] Forward `metadata.project` from the gateway in litellm/custom_callbacks.py
-- [ ] T120 [US1] Document project tagging (metadata field, auto-creation, precedence) in README.md
+- [X] T116 [US1] Implement `normalize_project_name()` + `resolve_or_create_project()` in backend/app/services/project_service.py, using an atomic upsert so concurrent inserts collapse to one row (FR-102, FR-103, FR-105, FR-107)
+- [X] T117 [US1] Add optional `project` (name) field to `RawTelemetryEvent` and resolved `project_id` to `NormalizedTelemetryEvent` in backend/app/telemetry/events.py (FR-101)
+- [X] T118 [US1] Resolve project name → `project_id` during ingestion in backend/app/telemetry/collector.py, applying key-over-name precedence (FR-101, FR-116, FR-119)
+- [X] T119 [US1] Forward `metadata.project` from the gateway in litellm/custom_callbacks.py
+- [X] T120 [US1] Document project tagging (metadata field, auto-creation, precedence) in README.md
 
 **Checkpoint**: A trace tagged `{"metadata": {"project": "my-app"}}` creates and attributes to project `my-app`.
 
@@ -71,13 +71,13 @@
 
 **Independent Test**: Create a project in the UI, send tagged traces, and confirm its request/token/cost totals.
 
-- [ ] T121 [P] [US2] Rename `applicationsApi` → `projectsApi` and `by-application` → `by-project` in frontend/src/lib/api.ts
-- [ ] T122 [P] [US2] Rename `Application*` types → `Project*` and `application_id` → `project_id` in frontend/src/lib/types.ts
-- [ ] T123 [US2] Rename `application_id` → `project_id` filter key in frontend/src/lib/use-range-filters.ts
-- [ ] T124 [US2] Move frontend/src/app/applications/page.tsx → frontend/src/app/projects/page.tsx; label auto-created projects (FR-106, FR-108)
-- [ ] T125 [US2] Update nav link `/applications` → `/projects` in frontend/src/components/nav.tsx
-- [ ] T126 [US2] Add a project selector to frontend/src/components/filter-bar.tsx so all views can scope by project (FR-110)
-- [ ] T127 [US2] Update the by-project tab in frontend/src/app/costs/page.tsx
+- [X] T121 [P] [US2] Rename `applicationsApi` → `projectsApi` and `by-application` → `by-project` in frontend/src/lib/api.ts
+- [X] T122 [P] [US2] Rename `Application*` types → `Project*` and `application_id` → `project_id` in frontend/src/lib/types.ts
+- [X] T123 [US2] Rename `application_id` → `project_id` filter key in frontend/src/lib/use-range-filters.ts
+- [X] T124 [US2] Move frontend/src/app/applications/page.tsx → frontend/src/app/projects/page.tsx; label auto-created projects (FR-106, FR-108)
+- [X] T125 [US2] Update nav link `/applications` → `/projects` in frontend/src/components/nav.tsx
+- [X] T126 [US2] Add a project selector to frontend/src/components/filter-bar.tsx so all views can scope by project (FR-110)
+- [X] T127 [US2] Update the by-project tab in frontend/src/app/costs/page.tsx
 
 **Checkpoint**: Projects page lists both manual and auto-created projects; project filter applies across views.
 
@@ -112,12 +112,12 @@
 
 **Independent Test**: Every page renders in the dark theme with legible charts and accessible contrast.
 
-- [ ] T135 [US4] Replace zero-chroma tokens with a dark teal/lime palette (background, foreground, card, primary, accent, border, ring, destructive, and `--chart-1..5`) in frontend/src/app/globals.css (FR-120, FR-121, FR-123)
-- [ ] T136 [US4] Apply the dark class and theme metadata in frontend/src/app/layout.tsx
-- [ ] T137 [P] [US4] Restyle nav with active-state accent and brand mark in frontend/src/components/nav.tsx
+- [X] T135 [US4] Replace zero-chroma tokens with a dark teal/lime palette (background, foreground, card, primary, accent, border, ring, destructive, and `--chart-1..5`) in frontend/src/app/globals.css (FR-120, FR-121, FR-123)
+- [X] T136 [US4] Apply the dark class and theme metadata in frontend/src/app/layout.tsx
+- [X] T137 [P] [US4] Restyle nav with active-state accent and brand mark in frontend/src/components/nav.tsx
 - [ ] T138 [P] [US4] Restyle the login screen in frontend/src/app/login/page.tsx
-- [ ] T139 [US4] Apply themed chart colors and grid/axis/tooltip styling in frontend/src/app/page.tsx
-- [ ] T140 [P] [US4] Add icon/text status affordances so state is not conveyed by color alone across status badges (FR-122)
+- [X] T139 [US4] Apply themed chart colors and grid/axis/tooltip styling in frontend/src/app/page.tsx
+- [X] T140 [P] [US4] Add icon/text status affordances so state is not conveyed by color alone across status badges (FR-122) — badges already render the status as text
 - [ ] T141 [US4] Normalize spacing, headings, and card styling across all dashboard pages (FR-124)
 
 **Checkpoint**: All pages render consistently; `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build` pass.

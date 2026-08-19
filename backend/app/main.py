@@ -2,16 +2,21 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 from fastapi import FastAPI, Request
 from fastapi.exceptions import HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
 
 from app.api.router import api_router
 from app.core.config import get_settings
 from app.core.logging import configure_logging, get_logger
 from app.core.metrics import mount_metrics
 from app.services.query_filters import InvalidFilterError
+from app.web import web_router
+from app.web.deps import RedirectToLogin
 
 configure_logging()
 logger = get_logger(__name__)
@@ -35,6 +40,22 @@ app.add_middleware(
 
 mount_metrics(app)
 app.include_router(api_router)
+app.include_router(web_router)
+
+_STATIC_DIR = Path(__file__).resolve().parent / "static"
+app.mount("/static", StaticFiles(directory=str(_STATIC_DIR)), name="static")
+
+
+@app.get("/", include_in_schema=False)
+async def root_redirect() -> RedirectResponse:
+    return RedirectResponse(url="/traces")
+
+
+@app.exception_handler(RedirectToLogin)
+async def redirect_to_login_exception_handler(
+    request: Request, exc: RedirectToLogin
+) -> RedirectResponse:
+    return RedirectResponse(url=f"/login?next={exc.next_path}", status_code=303)
 
 
 @app.exception_handler(HTTPException)

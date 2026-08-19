@@ -1,0 +1,299 @@
+/* Teal/lime dark theme tokens, ported from frontend/src/app/globals.css
+   (feature 002) — plain CSS custom properties, no build step (T224). */
+
+:root {
+  color-scheme: dark;
+
+  --background: oklch(0.17 0.018 195);
+  --foreground: oklch(0.96 0.008 195);
+
+  --card: oklch(0.22 0.022 195);
+  --card-foreground: oklch(0.96 0.008 195);
+  --popover: oklch(0.21 0.022 195);
+  --popover-foreground: oklch(0.96 0.008 195);
+
+  --primary: oklch(0.74 0.128 182);
+  --primary-foreground: oklch(0.17 0.03 195);
+
+  --secondary: oklch(0.28 0.026 195);
+  --secondary-foreground: oklch(0.96 0.008 195);
+
+  --muted: oklch(0.26 0.022 195);
+  --muted-foreground: oklch(0.73 0.025 195);
+
+  --accent: oklch(0.85 0.185 126);
+  --accent-foreground: oklch(0.19 0.04 140);
+
+  --destructive: oklch(0.68 0.195 22);
+
+  --border: oklch(0.75 0.05 195 / 16%);
+  --input: oklch(0.75 0.05 195 / 20%);
+  --ring: oklch(0.74 0.128 182);
+
+  /* Distinguishable in both hue and lightness, for colour-vision safety. */
+  --chart-1: oklch(0.74 0.128 182);
+  --chart-2: oklch(0.85 0.185 126);
+  --chart-3: oklch(0.64 0.115 232);
+  --chart-4: oklch(0.79 0.145 152);
+  --chart-5: oklch(0.82 0.135 85);
+
+  --radius: 0.5rem;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family:
+    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 15% -10%, oklch(0.74 0.128 182 / 10%), transparent),
+    radial-gradient(ellipse 60% 40% at 85% -10%, oklch(0.85 0.185 126 / 8%), transparent);
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+a {
+  color: inherit;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  background-color: color-mix(in oklch, var(--card) 70%, transparent);
+  backdrop-filter: blur(8px);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.nav-brand {
+  font-weight: 700;
+  font-size: 1.05rem;
+  background: linear-gradient(to right, var(--primary), var(--accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.nav-link {
+  padding: 0.35rem 0.7rem;
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  text-decoration: none;
+  color: var(--muted-foreground);
+}
+
+.nav-link.active {
+  background-color: color-mix(in oklch, var(--primary) 10%, transparent);
+  color: var(--primary);
+}
+
+.nav-spacer {
+  flex: 1;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.card {
+  background-color: var(--card);
+  color: var(--card-foreground);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+}
+
+.card + .card {
+  margin-top: 1rem;
+}
+
+h1, h2, h3 {
+  margin: 0 0 0.75rem 0;
+}
+
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: end;
+  margin-bottom: 1rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+}
+
+select, input, button {
+  font-family: inherit;
+  font-size: 0.9rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: calc(var(--radius) - 2px);
+  border: 1px solid var(--border);
+  background-color: var(--input);
+  color: var(--foreground);
+}
+
+button {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+button:hover {
+  filter: brightness(1.08);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+th, td {
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+th {
+  color: var(--muted-foreground);
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+tr.clickable-row {
+  cursor: pointer;
+}
+
+tr.clickable-row:hover {
+  background-color: color-mix(in oklch, var(--primary) 6%, transparent);
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge-success {
+  background-color: color-mix(in oklch, var(--chart-2) 22%, transparent);
+  color: var(--chart-2);
+}
+
+.badge-error {
+  background-color: color-mix(in oklch, var(--destructive) 22%, transparent);
+  color: var(--destructive);
+}
+
+.badge-running {
+  background-color: color-mix(in oklch, var(--chart-3) 22%, transparent);
+  color: var(--chart-3);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--muted-foreground);
+}
+
+.empty-state pre {
+  text-align: left;
+  display: inline-block;
+  background-color: var(--muted);
+  padding: 1rem;
+  border-radius: var(--radius);
+  overflow-x: auto;
+}
+
+.pagination {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  color: var(--muted-foreground);
+}
+
+/* Waterfall (trace detail) */
+
+.waterfall {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.waterfall-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid color-mix(in oklch, var(--border) 60%, transparent);
+}
+
+.waterfall-label {
+  flex: 0 0 260px;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.waterfall-track {
+  position: relative;
+  flex: 1;
+  height: 1.25rem;
+  background-color: var(--muted);
+  border-radius: 3px;
+}
+
+.waterfall-bar {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  border-radius: 3px;
+  min-width: 3px;
+}
+
+.kind-llm { background-color: var(--chart-1); }
+.kind-tool { background-color: var(--chart-2); }
+.kind-retriever { background-color: var(--chart-3); }
+.kind-embedding { background-color: var(--chart-4); }
+.kind-chain, .kind-agent { background-color: var(--chart-5); }
+.kind-custom { background-color: var(--muted-foreground); }
+
+.waterfall-bar.status-error {
+  background-color: var(--destructive) !important;
+}
+
+.waterfall-meta {
+  flex: 0 0 140px;
+  font-size: 0.8rem;
+  color: var(--muted-foreground);
+  text-align: right;
+}
+
+.orphan-flag {
+  color: var(--destructive);
+  font-size: 0.75rem;
+  margin-left: 0.35rem;
+}
